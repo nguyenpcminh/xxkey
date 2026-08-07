@@ -38,7 +38,7 @@ Kế thừa những giá trị cốt lõi của OpenKey, XXKey tập trung cải
 
 ### Cho macOS
 
-1. Tải về file `.dmg` mới nhất từ mục [Releases](https://github.com/nguyenpcminh/OpenKey/releases/latest).
+1. Tải về file `.dmg` mới nhất từ mục [Releases](https://github.com/nguyenpcminh/xxkey/releases/latest).
 2. Mở file `.dmg` và kéo ứng dụng **XXKey.app** vào thư mục **Applications** (Ứng dụng).
 3. **Cấp quyền truy cập hệ thống (Trợ năng):**
    - Truy cập **System Settings** (Cài đặt hệ thống) -> **Privacy & Security** (Quyền riêng tư & Bảo mật) -> **Accessibility** (Trợ năng).
