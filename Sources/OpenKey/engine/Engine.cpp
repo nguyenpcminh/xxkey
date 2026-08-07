@@ -1327,10 +1327,11 @@ bool checkQuickConsonant() {
                 hBPC = 1;
                 hNCC = 2;
             }
+            Uint16 endConsKey = CHR(_index-1);
             if (_index < MAX_BUFF-1)
                 _index++;
-            TypingWord[_index-1] = _quickEndConsonant[CHR(_index-2)][1] | (TypingWord[_index-2] & CAPS_MASK ? CAPS_MASK : 0);
-            TypingWord[_index-2] = _quickEndConsonant[CHR(_index-2)][0] | (TypingWord[_index-2] & CAPS_MASK ? CAPS_MASK : 0);
+            TypingWord[_index-1] = _quickEndConsonant[endConsKey][1] | (TypingWord[_index-2] & CAPS_MASK ? CAPS_MASK : 0);
+            TypingWord[_index-2] = _quickEndConsonant[endConsKey][0] | (TypingWord[_index-2] & CAPS_MASK ? CAPS_MASK : 0);
             
             l = 1;
         }
