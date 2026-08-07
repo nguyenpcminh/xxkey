@@ -63,7 +63,7 @@ Nếu bạn muốn tự tay xây dựng ứng dụng từ mã nguồn:
 - **Cách build:**
   1. Clone mã nguồn của dự án:
      ```bash
-     git clone https://github.com/nguyenpcminh/OpenKey.git
+     git clone https://github.com/nguyenpcminh/xxkey.git
      ```
   2. Mở Xcode và mở dự án tại đường dẫn `Sources/OpenKey/macOS/OpenKey.xcodeproj`.
   3. Trên thanh menu Xcode, chọn **Product** -> **Archive** để bắt đầu biên dịch phiên bản Release.
