@@ -34,7 +34,7 @@ XXKey mặc định chạy ở chế độ **Administrator** (Quản trị viên
 
 ## 📥 Hướng dẫn cài đặt
 
-1. Tải về file `.zip` phiên bản mới nhất từ mục [Releases](https://github.com/nguyenpcminh/OpenKey/releases/latest).
+1. Tải về file `.zip` phiên bản mới nhất từ mục [Releases](https://github.com/nguyenpcminh/xxkey/releases).
 2. Giải nén tệp tin đã tải vào một thư mục bất kỳ trên máy tính.
 3. Chạy file thực thi `XXKey.exe`. 
 4. Khi chạy lần đầu, đồng ý cấp quyền chạy dưới quyền **Administrator** (chọn `Yes` trên hộp thoại xác nhận của Windows).

@@ -38,8 +38,8 @@ Kế thừa những giá trị cốt lõi của OpenKey, XXKey tập trung cải
 
 ### Cho macOS
 
-1. Tải về file `.dmg` mới nhất từ mục [Releases](https://github.com/nguyenpcminh/xxkey/releases/latest).
-2. Mở file `.dmg` và kéo ứng dụng **XXKey.app** vào thư mục **Applications** (Ứng dụng).
+1. Tải về file `.zip` mới nhất từ mục [Releases](https://github.com/nguyenpcminh/xxkey/releases).
+2. Giải nén và kéo ứng dụng **XXKey.app** vào thư mục **Applications** (Ứng dụng).
 3. **Cấp quyền truy cập hệ thống (Trợ năng):**
    - Truy cập **System Settings** (Cài đặt hệ thống) -> **Privacy & Security** (Quyền riêng tư & Bảo mật) -> **Accessibility** (Trợ năng).
    - Kích hoạt và cấp quyền cho **XXKey.app**.
@@ -47,7 +47,7 @@ Kế thừa những giá trị cốt lõi của OpenKey, XXKey tập trung cải
 
 ### Cho Windows
 
-1. Tải về file `.zip` dành cho Windows từ mục [Releases](https://github.com/nguyenpcminh/OpenKey/releases/latest).
+1. Tải về file `.zip` dành cho Windows từ mục [Releases](https://github.com/nguyenpcminh/xxkey/releases).
 2. Giải nén vào một thư mục bất kỳ trên máy tính của bạn.
 3. Chạy file thực thi `XXKey.exe`. Khuyến nghị chạy dưới quyền **Administrator** (Run as Administrator) để có thể gõ tiếng Việt bình thường trong game và các ứng dụng hệ thống.
 
