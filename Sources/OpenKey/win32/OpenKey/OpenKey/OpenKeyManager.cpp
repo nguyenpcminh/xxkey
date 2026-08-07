@@ -64,8 +64,10 @@ bool OpenKeyManager::checkUpdate(string& newVersion) {
 
 	posBegin = data.find("latestWinVersion");
 	posBegin = data.find(versionNameStr, posBegin);
+	if (posBegin == string::npos) return false;
 	posBegin += (sizeof(versionNameStr) - 1);
 	posBegin = data.find('\"', posBegin);
+	if (posBegin == string::npos) return false;
 	posBegin = data.find_first_of(numbers, posBegin);
 
 	posEnd = data.find('\"', posBegin);
@@ -78,6 +80,7 @@ bool OpenKeyManager::checkUpdate(string& newVersion) {
 
 	posBegin = posEnd;
 	posBegin = data.find(versionCodeStr, posBegin);
+	if (posBegin == string::npos) return false;
 	posBegin += (sizeof(versionCodeStr) - 1);
 
 	posEnd = data.find("}", posBegin);
@@ -86,6 +89,11 @@ bool OpenKeyManager::checkUpdate(string& newVersion) {
 		return false;
 	}
 
+	//Both newVersionCode (from version.json) and currentVersionCode
+	//(from getVersionNumber) use the same packed layout:
+	//   major | (minor << 8) | (patch << 16)
+	//so a direct comparison is correct; shiftVersion just normalises
+	//the JSON value into that layout before comparing.
 	auto shiftVersion = [](DWORD version) {
 		return (version << 16) | (version & 0x00FF00) | (version >> 16 & 0xFF);
 		};

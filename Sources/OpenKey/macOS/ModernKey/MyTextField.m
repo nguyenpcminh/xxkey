@@ -27,18 +27,31 @@
         if (!eventMonitor) {
             eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSKeyDownMask handler:^(NSEvent *event) {
                 self.LastKeyCode = event.keyCode;
-                self.LastKeyChar = event.characters.UTF8String[0];
+                //Take the first UTF-16 unit of the typed character (not the first
+                //UTF-8 byte), so multi-byte characters survive the round-trip.
+                self.LastKeyChar = event.characters.length > 0 ? [event.characters characterAtIndex:0] : 0;
                 return event;
             } ];
-            
+
         }
     }
     return okToChange;
 }
 
 -(void) textDidEndEditing:(NSNotification *)notification {
-    [NSEvent removeMonitor:eventMonitor];
-    eventMonitor = nil;
+    if (eventMonitor) {
+        [NSEvent removeMonitor:eventMonitor];
+        eventMonitor = nil;
+    }
+}
+
+- (void)dealloc {
+    //Remove the monitor even if the field was never asked to end editing,
+    //otherwise the event monitor (and this object) leaks.
+    if (eventMonitor) {
+        [NSEvent removeMonitor:eventMonitor];
+        eventMonitor = nil;
+    }
 }
 
 - (void)textDidChange:(NSNotification *)notification {

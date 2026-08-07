@@ -5,12 +5,12 @@
 //  Created by Tuyen on 9/4/19.
 //  Copyright © 2019 Tuyen Mai. All rights reserved.
 //
-#include <locale>
-#include <codecvt>
+
 #include "ConvertTool.h"
 #include "Engine.h"
 #include <iostream>
 #include <memory.h>
+#include <algorithm>
 
 //option
 bool convertToolDontAlertWhenCompleted = false;
@@ -166,7 +166,7 @@ string convertUtil(const string& sourceString) {
                 shouldUpperCase = true;
         } else if (t == ' ' && convertToolToCapsEachWord) {
             shouldUpperCase = true;
-        } else if (std::find(_breakCode.begin(), _breakCode.end(), t) != _breakCode.end()) {
+        } else if (std::find(_breakCode.begin(), _breakCode.end(), (Uint8)(t & 0xFF)) != _breakCode.end()) {
             hasBreak = true;
         } else {
             shouldUpperCase = false;

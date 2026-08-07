@@ -123,14 +123,78 @@ static bool _willTempOffEngine = false;
 void findAndCalculateVowel(const bool& forGrammar=false);
 void insertMark(const Uint32& markMask, const bool& canModifyFlag=true);
 
-static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+#ifdef _WIN32
+#include <windows.h>
 wstring utf8ToWideString(const string& str) {
-    return converter.from_bytes(str.c_str());
+    if (str.empty()) return wstring();
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+    wstring wstrTo(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+    return wstrTo;
 }
 
-string wideStringToUtf8(const wstring& str) {
-    return converter.to_bytes(str.c_str());
+string wideStringToUtf8(const wstring& wstr) {
+    if (wstr.empty()) return string();
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
+    string strTo(size_needed, 0);
+    WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
+    return strTo;
 }
+#else
+wstring utf8ToWideString(const string& str) {
+    wstring wstr;
+    wstr.reserve(str.size());
+    for (size_t i = 0; i < str.size();) {
+        unsigned char c = str[i];
+        uint32_t codepoint = 0;
+        if (c < 0x80) {
+            codepoint = c;
+            i += 1;
+        } else if ((c & 0xE0) == 0xC0) {
+            if (i + 1 >= str.size()) break;
+            codepoint = ((c & 0x1F) << 6) | (str[i+1] & 0x3F);
+            i += 2;
+        } else if ((c & 0xF0) == 0xE0) {
+            if (i + 2 >= str.size()) break;
+            codepoint = ((c & 0x0F) << 12) | ((str[i+1] & 0x3F) << 6) | (str[i+2] & 0x3F);
+            i += 3;
+        } else if ((c & 0xF8) == 0xF0) {
+            if (i + 3 >= str.size()) break;
+            codepoint = ((c & 0x07) << 18) | ((str[i+1] & 0x3F) << 12) | ((str[i+2] & 0x3F) << 6) | (str[i+3] & 0x3F);
+            i += 4;
+        } else {
+            i += 1;
+            continue;
+        }
+        wstr.push_back((wchar_t)codepoint);
+    }
+    return wstr;
+}
+
+string wideStringToUtf8(const wstring& wstr) {
+    string str;
+    str.reserve(wstr.size() * 3);
+    for (wchar_t wc : wstr) {
+        uint32_t codepoint = (uint32_t)wc;
+        if (codepoint < 0x80) {
+            str.push_back((char)codepoint);
+        } else if (codepoint < 0x800) {
+            str.push_back((char)(0xC0 | (codepoint >> 6)));
+            str.push_back((char)(0x80 | (codepoint & 0x3F)));
+        } else if (codepoint < 0x10000) {
+            str.push_back((char)(0xE0 | (codepoint >> 12)));
+            str.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
+            str.push_back((char)(0x80 | (codepoint & 0x3F)));
+        } else if (codepoint < 0x110000) {
+            str.push_back((char)(0xF0 | (codepoint >> 18)));
+            str.push_back((char)(0x80 | ((codepoint >> 12) & 0x3F)));
+            str.push_back((char)(0x80 | ((codepoint >> 6) & 0x3F)));
+            str.push_back((char)(0x80 | (codepoint & 0x3F)));
+        }
+    }
+    return str;
+}
+#endif
 
 void* vKeyInit() {
     _index = 0;
@@ -630,7 +694,7 @@ void handleModernMark() {
     //default
     VWSM = VEI;
     hBPC = (_index - VEI);
-    
+
     //rule 2
     if (vowelCount == 3 && ((CHR(VSI) == KEY_O && CHR(VSI+1) == KEY_A && CHR(VSI+2) == KEY_I) ||
                             (CHR(VSI) == KEY_U && CHR(VSI+1) == KEY_Y && CHR(VSI+2) == KEY_U) ||
@@ -638,41 +702,42 @@ void handleModernMark() {
                             (CHR(VSI) == KEY_U && CHR(VSI+1) == KEY_Y && CHR(VSI+2) == KEY_A))) {
         VWSM = VSI + 1;
         hBPC = _index - VWSM;
-    } else if ((CHR(VSI) == KEY_O && CHR(VSI+1) == KEY_I) ||
-               (CHR(VSI) == KEY_A && CHR(VSI+1) == KEY_I) ||
-               (CHR(VSI)== KEY_U && CHR(VSI+1) == KEY_I) ) {
-        
+    } else if (vowelCount >= 2 && (CHR(VSI) == KEY_O && CHR(VSI+1) == KEY_I) ||
+               vowelCount >= 2 && (CHR(VSI) == KEY_A && CHR(VSI+1) == KEY_I) ||
+               vowelCount >= 2 && (CHR(VSI)== KEY_U && CHR(VSI+1) == KEY_I) ) {
+
         VWSM = VSI;
         hBPC = _index - VWSM;
-    } else if (CHR(VEI-1) == KEY_A && CHR(VEI) == KEY_Y) {
+    } else if (vowelCount >= 2 && VEI - 1 >= 0 && CHR(VEI-1) == KEY_A && CHR(VEI) == KEY_Y) {
         VWSM = VEI - 1;
         hBPC = (_index - VEI) + 1;
-    } else if (CHR(VSI) == KEY_U && CHR(VSI+1) == KEY_O) {
+    } else if (vowelCount >= 2 && CHR(VSI) == KEY_U && CHR(VSI+1) == KEY_O) {
         VWSM = VSI + 1;
         hBPC = _index - VWSM;
-    } else if (CHR(VSI+1) == KEY_O || CHR(VSI+1) == KEY_U) {
+    } else if (vowelCount >= 2 && (CHR(VSI+1) == KEY_O || CHR(VSI+1) == KEY_U)) {
         VWSM = VEI - 1;
         hBPC = (_index - VEI) + 1;
-    } else if (CHR(VSI) == KEY_O || CHR(VSI) == KEY_U) {
+    } else if (vowelCount >= 1 && (CHR(VSI) == KEY_O || CHR(VSI) == KEY_U)) {
         VWSM = VEI;
         hBPC = (_index - VEI);
     }
-    
+
     //rule 3.1
-    if ((CHR(VSI) == KEY_I && (TypingWord[VSI+1] & (KEY_E | TONE_MASK))) ||
+    if (vowelCount >= 2 &&
+        ((CHR(VSI) == KEY_I && (TypingWord[VSI+1] & (KEY_E | TONE_MASK))) ||
         (CHR(VSI) == KEY_Y && (TypingWord[VSI+1] & (KEY_E | TONE_MASK))) ||
         (CHR(VSI) == KEY_U && (TypingWord[VSI+1] == (KEY_O | TONE_MASK))) ||
-        ((TypingWord[VSI] == (KEY_U | TONEW_MASK)) && (TypingWord[VSI+1] == (KEY_O | TONEW_MASK)))){
-        
+        ((TypingWord[VSI] == (KEY_U | TONEW_MASK)) && (TypingWord[VSI+1] == (KEY_O | TONEW_MASK))))){
+
         if (VSI+2 < _index) {
             if (CHR(VSI+2) == KEY_P || CHR(VSI+2) == KEY_T ||
                 CHR(VSI+2) == KEY_M || CHR(VSI+2) == KEY_N ||
                 CHR(VSI+2) == KEY_O || CHR(VSI+2) == KEY_U ||
                 CHR(VSI+2) == KEY_I || CHR(VSI+2) == KEY_C ||
-                (VSI+3 < _index && CHR(VSI+2) == KEY_C && CHR(VSI+2) == KEY_H) ||
-                (VSI+3 < _index && CHR(VSI+2) == KEY_N && CHR(VSI+2) == KEY_H) ||
-                (VSI+3 < _index && CHR(VSI+2) == KEY_N && CHR(VSI+2) == KEY_G)) {
-                
+                (VSI+3 < _index && CHR(VSI+2) == KEY_C && CHR(VSI+3) == KEY_H) ||
+                (VSI+3 < _index && CHR(VSI+2) == KEY_N && CHR(VSI+3) == KEY_H) ||
+                (VSI+3 < _index && CHR(VSI+2) == KEY_N && CHR(VSI+3) == KEY_G)) {
+
                 VWSM = VSI + 1;
                 hBPC = _index - VWSM;
             } else {
@@ -685,11 +750,12 @@ void handleModernMark() {
         }
     }
     //rule 3.2
-    else if ((CHR(VSI) == KEY_I && (CHR(VSI) == KEY_A)) ||
-             (CHR(VSI) == KEY_Y && (CHR(VSI) == KEY_A)) ||
-             (CHR(VSI) == KEY_U && (CHR(VSI) == KEY_A)) ||
-             (CHR(VSI) == KEY_U && (TypingWord[VSI+1] == (KEY_U | TONEW_MASK)))){
-        
+    else if (vowelCount >= 2 &&
+             ((CHR(VSI) == KEY_I && (CHR(VSI+1) == KEY_A)) ||
+             (CHR(VSI) == KEY_Y && (CHR(VSI+1) == KEY_A)) ||
+             (CHR(VSI) == KEY_U && (CHR(VSI+1) == KEY_A)) ||
+             (CHR(VSI) == KEY_U && (TypingWord[VSI+1] == (KEY_U | TONEW_MASK))))){
+
         VWSM = VSI;
         hBPC = _index - VWSM;
     }

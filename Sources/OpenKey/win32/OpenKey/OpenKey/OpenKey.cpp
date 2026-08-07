@@ -273,7 +273,7 @@ static void SendBackspace() {
 		SendMessage(HWND_BROADCAST, WM_CHAR, VK_BACK, 0L);
 	}
 	if (IS_DOUBLE_CODE(vCodeTable)) { //VNI or Unicode Compound
-		if (_syncKey.back() > 1) {
+		if (_syncKey.size() > 0 && _syncKey.back() > 1) {
 			/*if (!(vCodeTable == 3 && containUnicodeCompoundApp(FRONT_APP))) {
 				SendInput(2, backspaceEvent, sizeof(INPUT));
 			}*/
@@ -283,7 +283,8 @@ static void SendBackspace() {
 				SendMessage(HWND_BROADCAST, WM_CHAR, VK_BACK, 0L);
 			}
 		}
-		_syncKey.pop_back();
+		if (_syncKey.size() > 0)
+			_syncKey.pop_back();
 	}
 }
 
@@ -301,8 +302,11 @@ static void SendEmptyCharacter() {
 static void SendNewCharString(const bool& dataFromMacro = false) {
 	_j = 0;
 	_newCharSize = dataFromMacro ? (Uint16)pData->macroData.size() : pData->newCharCount;
-	if (_newCharString.size() < _newCharSize) {
-		_newCharString.resize(_newCharSize);
+	//Reserve enough room: each entry may expand to 2 UTF-16 units
+	//(VNI Windows, CP 1258, Unicode Compound), plus the restore key,
+	//plus a NUL terminator for the clipboard.
+	if (_newCharString.size() < (size_t)_newCharSize * 2 + 2) {
+		_newCharString.resize((size_t)_newCharSize * 2 + 2);
 	}
 	_willSendControlKey = false;
 	
@@ -368,6 +372,8 @@ static void SendNewCharString(const bool& dataFromMacro = false) {
 		startNewSession();
 	}
 
+	//ensure the clipboard string is NUL-terminated (buffer may hold stale data from a previous call)
+	_newCharString[_newCharSize] = 0;
 	OpenKeyHelper::setClipboardText((LPCTSTR)_newCharString.data(), _newCharSize + 1, CF_UNICODETEXT);
 
 	//Send shift + insert
@@ -514,6 +520,8 @@ LRESULT CALLBACK keyboardHookProcess(int nCode, WPARAM wParam, LPARAM lParam) {
 	}
 	if (!_isFlagKey && wParam != WM_KEYUP && wParam != WM_SYSKEYUP)
 		_keycode = (Uint16)keyboardData->vkCode;
+	else if (!_isFlagKey)
+		_keycode = 0; //key-up of a regular key: stale keycode must not trigger hotkey when a modifier is released
 
 	//switch language shortcut; convert hotkey
 	if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) && !_isFlagKey && _keycode != 0) {

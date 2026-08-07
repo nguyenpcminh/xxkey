@@ -129,6 +129,8 @@ extern AppDelegate* appDelegate;
     [self.FromCode selectItemAtIndex:code];
     convertToolFromCode = [self.FromCode indexOfSelectedItem];
     convertToolToCode = [self.ToCode indexOfSelectedItem];
+    [[NSUserDefaults standardUserDefaults] setInteger:convertToolFromCode forKey:@"convertToolFromCode"];
+    [[NSUserDefaults standardUserDefaults] setInteger:convertToolToCode forKey:@"convertToolToCode"];
 }
 
 - (IBAction)onSControl:(NSButton *)sender {

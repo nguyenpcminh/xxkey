@@ -151,8 +151,12 @@ void MacroDialog::insertItem(const int& index, LPTSTR macroName, LPTSTR macroCon
 }
 
 void MacroDialog::onSelectItem(const int & index) {
-	SetWindowText(hMacroName, utf8ToWideString(macroText[macroText.size() - 1 - index]).c_str());
-	SetWindowText(hMacroContent, utf8ToWideString(macroContent[macroText.size() - 1 - index]).c_str());
+	//Guard against stale indices (e.g. LVN_ITEMCHANGED after the list was rebuilt).
+	if (index < 0 || index >= (int)macroText.size())
+		return;
+	int idx = (int)macroText.size() - 1 - index;
+	SetWindowText(hMacroName, utf8ToWideString(macroText[idx]).c_str());
+	SetWindowText(hMacroContent, utf8ToWideString(macroContent[idx]).c_str());
 	SetWindowText(hAddButton, BTN_UPDATE_TEXT);
 }
 

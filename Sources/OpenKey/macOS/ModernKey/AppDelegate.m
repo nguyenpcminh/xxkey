@@ -320,8 +320,28 @@ extern bool convertToolDontAlertWhenCompleted;
 }
 
 -(void)setRunOnStartup:(BOOL)val {
-    CFStringRef appId = (__bridge CFStringRef)@"com.tuyenmai.OpenKeyHelper";
-    SMLoginItemSetEnabled(appId, val);
+    if (@available(macOS 13.0, *)) {
+        SMAppService *service = [SMAppService loginItemServiceWithIdentifier:@"com.tuyenmai.OpenKeyHelper"];
+        NSError *error = nil;
+        if (val) {
+            if (service.status != SMAppServiceStatusEnabled) {
+                [service registerAndReturnError:&error];
+                if (error) {
+                    NSLog(@"Error registering SMAppService: %@", error.localizedDescription);
+                }
+            }
+        } else {
+            if (service.status == SMAppServiceStatusEnabled) {
+                [service unregisterAndReturnError:&error];
+                if (error) {
+                    NSLog(@"Error unregistering SMAppService: %@", error.localizedDescription);
+                }
+            }
+        }
+    } else {
+        CFStringRef appId = (__bridge CFStringRef)@"com.tuyenmai.OpenKeyHelper";
+        SMLoginItemSetEnabled(appId, val);
+    }
 }
 
 -(void)setGrayIcon:(BOOL)val {

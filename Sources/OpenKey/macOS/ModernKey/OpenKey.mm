@@ -11,6 +11,7 @@
 #import "Engine.h"
 #import "AppDelegate.h"
 #import "ViewController.h"
+#import "OpenKeyManager.h"
 
 #define FRONT_APP [[NSWorkspace sharedWorkspace] frontmostApplication].bundleIdentifier
 #define OTHER_CONTROL_KEY (_flag & kCGEventFlagMaskCommand) || (_flag & kCGEventFlagMaskControl) || \
@@ -369,18 +370,19 @@ extern "C" {
     void SendBackspace() {
         CGEventTapPostEvent(_proxy, eventBackSpaceDown);
         CGEventTapPostEvent(_proxy, eventBackSpaceUp);
-        
+
         if (IS_DOUBLE_CODE(vCodeTable)) { //VNI or Unicode Compound
-            if (_syncKey.back() > 1) {
+            if (_syncKey.size() > 0 && _syncKey.back() > 1) {
                 if (!(vCodeTable == 3 && containUnicodeCompoundApp(FRONT_APP))) {
                     CGEventTapPostEvent(_proxy, eventBackSpaceDown);
                     CGEventTapPostEvent(_proxy, eventBackSpaceUp);
                 }
             }
-            _syncKey.pop_back();
+            if (_syncKey.size() > 0)
+                _syncKey.pop_back();
         }
     }
-    
+
     void SendShiftAndLeftArrow() {
         CGEventRef eventVkeyDown = CGEventCreateKeyboardEvent (myEventSource, KEY_LEFT, true);
         CGEventRef eventVkeyUp = CGEventCreateKeyboardEvent (myEventSource, KEY_LEFT, false);
@@ -388,18 +390,19 @@ extern "C" {
         _privateFlag |= kCGEventFlagMaskShift;
         CGEventSetFlags(eventVkeyDown, _privateFlag);
         CGEventSetFlags(eventVkeyUp, _privateFlag);
-        
+
         CGEventTapPostEvent(_proxy, eventVkeyDown);
         CGEventTapPostEvent(_proxy, eventVkeyUp);
-        
+
         if (IS_DOUBLE_CODE(vCodeTable)) { //VNI or Unicode Compound
-            if (_syncKey.back() > 1) {
+            if (_syncKey.size() > 0 && _syncKey.back() > 1) {
                 if (!(vCodeTable == 3 && containUnicodeCompoundApp(FRONT_APP))) {
                     CGEventTapPostEvent(_proxy, eventVkeyDown);
                     CGEventTapPostEvent(_proxy, eventVkeyUp);
                 }
             }
-            _syncKey.pop_back();
+            if (_syncKey.size() > 0)
+                _syncKey.pop_back();
         }
         CFRelease(eventVkeyDown);
         CFRelease(eventVkeyUp);
@@ -599,8 +602,13 @@ extern "C" {
      * MAIN Callback.
      */
     CGEventRef OpenKeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
+        if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
+            [OpenKeyManager reEnableEventTap];
+            return event;
+        }
+        
         //dont handle my event
-        if (CGEventGetIntegerValueField(event, kCGEventSourceStateID) == CGEventSourceGetSourceStateID(myEventSource)) {
+        if (event == NULL || CGEventGetIntegerValueField(event, kCGEventSourceStateID) == CGEventSourceGetSourceStateID(myEventSource)) {
             return event;
         }
         

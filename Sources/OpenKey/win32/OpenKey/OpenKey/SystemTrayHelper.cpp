@@ -249,6 +249,11 @@ static void loadTrayIcon() {
 		icon = vUseGrayIcon ? IDI_ICON_STATUS_ENG_10 : IDI_ICON_STATUS_ENG;
 		LoadString(GetModuleHandle(0), IDS_TRAY_TITLE, nid.szTip, 128);
 	}
+	//Destroy the previous icon to avoid leaking a GDI handle every time
+	//updateData() switches the tray icon.
+	if (nid.hIcon != NULL) {
+		DestroyIcon(nid.hIcon);
+	}
 	nid.hIcon = LoadIcon(GetModuleHandle(0), MAKEINTRESOURCE(icon));
 }
 
@@ -317,14 +322,14 @@ static HINSTANCE ins;
 static int recreateCount = 0;
 
 void SystemTrayHelper::_createSystemTrayIcon(const HINSTANCE& hIns) {
+	ins = hIns; //remember the instance for timer-based retries
 	HWND hWnd = createFakeWindow(ins);
-	
+
 	if (hWnd == NULL) { //Use timer to create
 		if (recreateCount >= 5) {
 			PostQuitMessage(0);
 			return;
 		}
-		ins = hIns;
 		SetTimer(NULL, 0, 1000 * 3, (TIMERPROC)&WaitToCreateFakeWindow);
 		++recreateCount;
 		return;

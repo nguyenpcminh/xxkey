@@ -211,46 +211,62 @@ bool OpenKeyHelper::quickConvert() {
 		return false;
 	}
 
-	string dataHTML, dataRTF;
+	string dataHTML;
 	wstring dataUnicode;
 
-	char* pHTML = 0, pRTF = 0;
-	wchar_t* pUnicode = 0;
-
-	//HTML
+	//Copy the data out WHILE the clipboard handle is locked; using the pointer
+	//after GlobalUnlock (or after CloseClipboard) is undefined behaviour.
 	HANDLE hData = GetClipboardData(CF_HTML);
 	if (hData) {
-		pHTML = static_cast<char*>(GlobalLock(hData));
-		GlobalUnlock(hData);
+		char* pHTML = static_cast<char*>(GlobalLock(hData));
+		if (pHTML) {
+			dataHTML = pHTML;
+			GlobalUnlock(hData);
+		}
 	}
-	if (pHTML) {
-		dataHTML = pHTML;
+	if (!dataHTML.empty()) {
 		dataHTML = convertUtil(dataHTML);
 	}
 
-	//UNICODE
 	hData = GetClipboardData(CF_UNICODETEXT);
 	if (hData) {
-		pUnicode = static_cast<wchar_t*>(GlobalLock(hData));
-		GlobalUnlock(hData);
+		wchar_t* pUnicode = static_cast<wchar_t*>(GlobalLock(hData));
+		if (pUnicode) {
+			dataUnicode = pUnicode;
+			GlobalUnlock(hData);
+		}
 	}
-	if (pUnicode) {
-		dataUnicode = pUnicode;
+	if (!dataUnicode.empty()) {
 		dataUnicode = utf8ToWideString(convertUtil(wideStringToUtf8(dataUnicode)));
 	}
 
-	OpenClipboard(0);
+	//The clipboard is still open from the read above (the same OpenClipboard call);
+	//do NOT call OpenClipboard again here, just empty and write back.
 	EmptyClipboard();
 
-	HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (int)(dataHTML.size() + 1) * sizeof(char));
-	memcpy(GlobalLock(hMem), dataHTML.c_str(), (int)(dataHTML.size() + 1) * sizeof(char));
-	GlobalUnlock(hMem);
-	SetClipboardData(CF_HTML, hMem);
+	if (!dataHTML.empty()) {
+		HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (int)(dataHTML.size() + 1) * sizeof(char));
+		if (hMem) {
+			char* p = static_cast<char*>(GlobalLock(hMem));
+			if (p) {
+				memcpy(p, dataHTML.c_str(), (int)(dataHTML.size() + 1) * sizeof(char));
+				GlobalUnlock(hMem);
+			}
+			SetClipboardData(CF_HTML, hMem);
+		}
+	}
 
-	hMem = GlobalAlloc(GMEM_MOVEABLE, (int)(dataUnicode.size() + 1) * sizeof(wchar_t));
-	memcpy(GlobalLock(hMem), dataUnicode.c_str(), (int)(dataUnicode.size() + 1) * sizeof(wchar_t));
-	GlobalUnlock(hMem);
-	SetClipboardData(CF_UNICODETEXT, hMem);
+	if (!dataUnicode.empty()) {
+		HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, (int)(dataUnicode.size() + 1) * sizeof(wchar_t));
+		if (hMem) {
+			wchar_t* p = static_cast<wchar_t*>(GlobalLock(hMem));
+			if (p) {
+				memcpy(p, dataUnicode.c_str(), (int)(dataUnicode.size() + 1) * sizeof(wchar_t));
+				GlobalUnlock(hMem);
+			}
+			SetClipboardData(CF_UNICODETEXT, hMem);
+		}
+	}
 
 	CloseClipboard();
 	return true;
