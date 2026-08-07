@@ -1,6 +1,6 @@
 //
 //  MacroViewController.h
-//  OpenKey
+//  XXKey
 //
 //  mist @2025
 //

@@ -1,13 +1,13 @@
 //
 //  ConvertToolViewController.mm
-//  OpenKey
+//  XXKey
 //
 //  mist @2025
 //
 
 #import "AppDelegate.h"
 #import "ConvertToolViewController.h"
-#import "OpenKeyManager.h"
+#import "XXKeyManager.h"
 #import "ConvertTool.h"
 
 extern AppDelegate* appDelegate;
@@ -26,7 +26,7 @@ extern AppDelegate* appDelegate;
 }
 
 -(void)fillData {
-    NSArray* codeData = [OpenKeyManager getTableCodes];
+    NSArray* codeData = [XXKeyManager getTableCodes];
     [self.FromCode removeAllItems];
     [self.FromCode addItemsWithTitles:codeData];
     [self.ToCode removeAllItems];
@@ -174,12 +174,12 @@ extern AppDelegate* appDelegate;
 }
 
 - (IBAction)onConvertButton:(id)sender {
-    if ([OpenKeyManager quickConvert]) {
+    if ([XXKeyManager quickConvert]) {
         if (!convertToolDontAlertWhenCompleted) {
-            [OpenKeyManager showMessage: self.view.window message:@"Chuyển mã thành công!" subMsg:@"Kết quả đã được lưu trong clipboard."];
+            [XXKeyManager showMessage: self.view.window message:@"Chuyển mã thành công!" subMsg:@"Kết quả đã được lưu trong clipboard."];
         }
     } else {
-        [OpenKeyManager showMessage: self.view.window message:@"Không có dữ liệu trong clipboard!" subMsg:@"Hãy sao chép một đoạn text để chuyển đổi!"];
+        [XXKeyManager showMessage: self.view.window message:@"Không có dữ liệu trong clipboard!" subMsg:@"Hãy sao chép một đoạn text để chuyển đổi!"];
     }
 }
 

@@ -1,11 +1,11 @@
 ﻿/*----------------------------------------------------------
-OpenKey - The Cross platform Open source Vietnamese Keyboard application.
+XXKey - The Cross platform Open source Vietnamese Keyboard application.
 
 mist @2025
 Contact: mist
 
 
-This file is belong to the OpenKey project, Win32 version
+This file is belong to the XXKey project, Win32 version
 which is released under GPL license.
 You can fork, modify, improve this program. If you
 redistribute your new version, it MUST be open source.
@@ -168,7 +168,7 @@ void MacroDialog::onAddMacroButton() {
 	wstring content = buffer;
 
 	if (name.compare(L"") == 0 || content.compare(L"") == 0) {
-		MessageBox(hDlg, _T("Bạn hãy nhập từ cần gõ tắt!"), _T("OpenKey"), MB_OK);
+		MessageBox(hDlg, _T("Bạn hãy nhập từ cần gõ tắt!"), _T("XXKey"), MB_OK);
 		return;
 	}
 
@@ -185,7 +185,7 @@ void MacroDialog::onDeleteMacroButton() {
 	wstring name = buffer;
 
 	if (name.compare(L"") == 0) {
-		MessageBox(hDlg, _T("Bạn hãy chọn từ cần xoá!"), _T("OpenKey"), MB_OK);
+		MessageBox(hDlg, _T("Bạn hãy chọn từ cần xoá!"), _T("XXKey"), MB_OK);
 		return;
 	}
 

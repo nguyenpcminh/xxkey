@@ -1,6 +1,6 @@
 //
 //  OpenKey.m
-//  OpenKey
+//  XXKey
 //
 //  mist @2025
 //
@@ -10,7 +10,7 @@
 #import "Engine.h"
 #import "AppDelegate.h"
 #import "ViewController.h"
-#import "OpenKeyManager.h"
+#import "XXKeyManager.h"
 
 #define FRONT_APP [[NSWorkspace sharedWorkspace] frontmostApplication].bundleIdentifier
 #define OTHER_CONTROL_KEY (_flag & kCGEventFlagMaskCommand) || (_flag & kCGEventFlagMaskControl) || \
@@ -154,7 +154,7 @@ extern "C" {
     }
     
     void queryFrontMostApp() {
-        if ([[[NSWorkspace sharedWorkspace] frontmostApplication].bundleIdentifier compare:OPENKEY_BUNDLE] != 0) {
+        if ([[[NSWorkspace sharedWorkspace] frontmostApplication].bundleIdentifier compare:XXKEY_BUNDLE] != 0) {
             _frontMostApp = [[NSWorkspace sharedWorkspace] frontmostApplication].bundleIdentifier;
             if (_frontMostApp == nil)
                 _frontMostApp = [[NSWorkspace sharedWorkspace] frontmostApplication].localizedName != nil ?
@@ -617,7 +617,7 @@ extern "C" {
      */
     CGEventRef OpenKeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *refcon) {
         if (type == kCGEventTapDisabledByTimeout || type == kCGEventTapDisabledByUserInput) {
-            [OpenKeyManager reEnableEventTap];
+            [XXKeyManager reEnableEventTap];
             return event;
         }
         

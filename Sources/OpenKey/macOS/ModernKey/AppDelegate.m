@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  OpenKey
+//  XXKey
 //
 //  mist @2025
 //
@@ -13,7 +13,7 @@
 #include <sys/proc_info.h>
 #import "AppDelegate.h"
 #import "ViewController.h"
-#import "OpenKeyManager.h"
+#import "XXKeyManager.h"
 #import "MJAccessibilityUtils.h"
 
 AppDelegate* appDelegate;
@@ -92,7 +92,7 @@ extern bool convertToolDontAlertWhenCompleted;
 
 -(void)askPermission {
     NSAlert *alert = [[NSAlert alloc] init];
-    [alert setMessageText: [NSString stringWithFormat:@"OpenKey cần bạn cấp quyền để có thể hoạt động!"]];
+    [alert setMessageText: [NSString stringWithFormat:@"XXKey cần bạn cấp quyền để có thể hoạt động!"]];
     [alert setInformativeText:@"Vui lòng chạy lại ứng dụng sau khi cấp quyền."];
 
     [alert addButtonWithTitle:@"Không"];
@@ -127,7 +127,7 @@ extern bool convertToolDontAlertWhenCompleted;
     BOOL alreadyRunning = NO;
 
     for (NSRunningApplication *app in runningApps) {
-        if ([app.bundleIdentifier isEqualToString:OPENKEY_BUNDLE] &&
+        if ([app.bundleIdentifier isEqualToString:XXKEY_BUNDLE] &&
             app.processIdentifier != myPID) {
             pid_t pid = app.processIdentifier;
             struct proc_bsdinfo proc;
@@ -161,7 +161,7 @@ extern bool convertToolDontAlertWhenCompleted;
     
     //init
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (![OpenKeyManager initEventTap]) {
+        if (![XXKeyManager initEventTap]) {
             [self onControlPanelSelected];
         } else {
             NSInteger showui = [[NSUserDefaults standardUserDefaults] integerForKey:@"ShowUIOnStartup"];
@@ -181,7 +181,7 @@ extern bool convertToolDontAlertWhenCompleted;
     //check update if enable
     NSInteger dontCheckUpdate = [[NSUserDefaults standardUserDefaults] integerForKey:@"DontCheckUpdate"];
     if (!dontCheckUpdate)
-        [OpenKeyManager checkNewVersion:nil callbackFunc:nil];
+        [XXKeyManager checkNewVersion:nil callbackFunc:nil];
     
     //correct run on startup
     NSInteger val = [[NSUserDefaults standardUserDefaults] integerForKey:@"RunOnStartup"];
@@ -320,7 +320,7 @@ extern bool convertToolDontAlertWhenCompleted;
 
 -(void)setRunOnStartup:(BOOL)val {
     if (@available(macOS 13.0, *)) {
-        SMAppService *service = [SMAppService loginItemServiceWithIdentifier:@"com.tuyenmai.OpenKeyHelper"];
+        SMAppService *service = [SMAppService loginItemServiceWithIdentifier:@"com.npcminh.XXKeyHelper"];
         NSError *error = nil;
         if (val) {
             if (service.status != SMAppServiceStatusEnabled) {
@@ -338,7 +338,7 @@ extern bool convertToolDontAlertWhenCompleted;
             }
         }
     } else {
-        CFStringRef appId = (__bridge CFStringRef)@"com.tuyenmai.OpenKeyHelper";
+        CFStringRef appId = (__bridge CFStringRef)@"com.npcminh.XXKeyHelper";
         SMLoginItemSetEnabled(appId, val);
     }
 }
@@ -493,7 +493,7 @@ extern bool convertToolDontAlertWhenCompleted;
     if (_convertWC == nil) {
         _convertWC = [[NSStoryboard storyboardWithName:@"Main" bundle:nil] instantiateControllerWithIdentifier:@"ConvertWindow"];
     }
-    //[OpenKeyManager showDockIcon:YES];
+    //[XXKeyManager showDockIcon:YES];
     if ([_convertWC.window isVisible])
         return;
     [_convertWC.window makeKeyAndOrderFront:nil];
@@ -501,12 +501,12 @@ extern bool convertToolDontAlertWhenCompleted;
 }
 
 -(void)onQuickConvert {
-    if ([OpenKeyManager quickConvert]) {
+    if ([XXKeyManager quickConvert]) {
         if (!convertToolDontAlertWhenCompleted) {
-            [OpenKeyManager showMessage: nil message:@"Chuyển mã thành công!" subMsg:@"Kết quả đã được lưu trong clipboard."];
+            [XXKeyManager showMessage: nil message:@"Chuyển mã thành công!" subMsg:@"Kết quả đã được lưu trong clipboard."];
         }
     } else {
-        [OpenKeyManager showMessage: nil message:@"Không có dữ liệu trong clipboard!" subMsg:@"Hãy sao chép một đoạn text để chuyển đổi!"];
+        [XXKeyManager showMessage: nil message:@"Không có dữ liệu trong clipboard!" subMsg:@"Hãy sao chép một đoạn text để chuyển đổi!"];
     }
 }
 
@@ -514,7 +514,7 @@ extern bool convertToolDontAlertWhenCompleted;
     if (_mainWC == nil) {
         _mainWC = [[NSStoryboard storyboardWithName:@"Main" bundle:nil] instantiateControllerWithIdentifier:@"OpenKey"];
     }
-    //[OpenKeyManager showDockIcon:YES];
+    //[XXKeyManager showDockIcon:YES];
     if ([_mainWC.window isVisible]) {
         return;
     }
@@ -526,7 +526,7 @@ extern bool convertToolDontAlertWhenCompleted;
     if (_macroWC == nil) {
         _macroWC = [[NSStoryboard storyboardWithName:@"Main" bundle:nil] instantiateControllerWithIdentifier:@"MacroWindow"];
     }
-    //[OpenKeyManager showDockIcon:YES];
+    //[XXKeyManager showDockIcon:YES];
     if ([_macroWC.window isVisible])
         return;
     
@@ -538,7 +538,7 @@ extern bool convertToolDontAlertWhenCompleted;
     if (_aboutWC == nil) {
         _aboutWC = [[NSStoryboard storyboardWithName:@"Main" bundle:nil] instantiateControllerWithIdentifier:@"AboutWindow"];
     }
-    //[OpenKeyManager showDockIcon:YES];
+    //[XXKeyManager showDockIcon:YES];
     if ([_aboutWC.window isVisible])
         return;
 
@@ -554,11 +554,11 @@ extern bool convertToolDontAlertWhenCompleted;
 
 #pragma mark Reset OpenKey after mac computer awake
 -(void)receiveWakeNote: (NSNotification*)note {
-    [OpenKeyManager initEventTap];
+    [XXKeyManager initEventTap];
 }
 
 -(void)receiveSleepNote: (NSNotification*)note {
-    [OpenKeyManager stopEventTap];
+    [XXKeyManager stopEventTap];
 }
 
 -(void)receiveActiveSpaceChanged: (NSNotification*)note {
@@ -566,7 +566,7 @@ extern bool convertToolDontAlertWhenCompleted;
 }
 
 -(void)activeAppChanged: (NSNotification*)note {
-    if (vUseSmartSwitchKey && [OpenKeyManager isInited]) {
+    if (vUseSmartSwitchKey && [XXKeyManager isInited]) {
         OnActiveAppChanged();
     }
 }

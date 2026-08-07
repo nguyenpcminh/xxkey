@@ -1,11 +1,11 @@
 //
-//  OpenKeyManager.m
-//  OpenKey
+//  XXKeyManager.m
+//  XXKey
 //
 //  mist @2025
 //
 
-#import "OpenKeyManager.h"
+#import "XXKeyManager.h"
 
 extern void OpenKeyInit(void);
 
@@ -16,11 +16,11 @@ extern CGEventRef OpenKeyCallback(CGEventTapProxy proxy,
 
 extern NSString* ConvertUtil(NSString* str);
 
-@interface OpenKeyManager ()
+@interface XXKeyManager ()
 
 @end
 
-@implementation OpenKeyManager {
+@implementation XXKeyManager {
 
 }
 static BOOL _isInited = NO;
@@ -154,7 +154,7 @@ static CFRunLoopSourceRef runLoopSource;
 +(void)checkNewVersion:(NSWindow*)parent callbackFunc:(CheckNewVersionCallback) callback {
     //load new version config
     NSURLSession *aSession = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    [[aSession dataTaskWithURL:[NSURL URLWithString:@"https://raw.githubusercontent.com/tuyenvm/OpenKey/master/version.json"] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [[aSession dataTaskWithURL:[NSURL URLWithString:@"https://raw.githubusercontent.com/nguyenpcminh/OpenKey/master/version.json"] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (((NSHTTPURLResponse *)response).statusCode == 200) {
             if (data) {
                 if(NSClassFromString(@"NSJSONSerialization")) {
@@ -195,8 +195,8 @@ static CFRunLoopSourceRef runLoopSource;
 
 +(void)showUpdateMessage:(NSWindow*)parent needUpdating:(BOOL)needUpdating newVersion:(NSString*)versionString {
     NSAlert *alert = [[NSAlert alloc] init];
-    [alert setMessageText:(needUpdating ? [NSString stringWithFormat:@"OpenKey Có phiên bản mới (%@), bạn có muốn cập nhật không?", versionString] : @"Bạn đang dùng phiên bản mới nhất!")];
-    [alert setInformativeText:(needUpdating ? @"Bấm 'Có' để cập nhật OpenKey." : @"")];
+    [alert setMessageText:(needUpdating ? [NSString stringWithFormat:@"XXKey có phiên bản mới (%@), bạn có muốn cập nhật không?", versionString] : @"Bạn đang dùng phiên bản mới nhất!")];
+    [alert setInformativeText:(needUpdating ? @"Bấm 'Có' để cập nhật XXKey." : @"")];
     
     if (!needUpdating) {
         [alert addButtonWithTitle:@"OK"];
@@ -245,7 +245,7 @@ static CFRunLoopSourceRef runLoopSource;
 +(NSString*)getApplicationSupportFolder {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *applicationSupportDirectory = [paths firstObject];
-    return [NSString stringWithFormat:@"%@/OpenKey", applicationSupportDirectory];
+    return [NSString stringWithFormat:@"%@/XXKey", applicationSupportDirectory];
 }
 
 +(NSString*)getUpdateBundlePath {

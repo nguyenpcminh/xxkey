@@ -1,6 +1,6 @@
-# OpenKey Change Log
+# XXKey Change Log
 
-##### OpenKey for Linux: (in development)
+##### XXKey for Linux: (in development)
 
 ##### Version 1.2 RC5: (26/08/2019)
 - Sửa lỗi không gõ được chữ "quởn".
@@ -25,13 +25,13 @@
 - Thêm thông tin phiên bản trong bảng giới thiệu.
 
 ##### Version 1.2 RC1: (13/08/2019)
-- Chuyển chế độ thông minh: Bạn đang dùng chế độ gõ Tiếng Việt trên ứng dụng A, bạn chuyển qua ứng dụng B trước đó bạn dùng chế độ gõ Tiếng Anh, OpenKey sẽ tự động chuyển qua chế độ gõ Tiếng Anh cho bạn, khi bạn quay lại ứng dụng A, OpenKey tất nhiên sẽ chuyển lại chế độ gõ tiếng Việt, rất cơ động.
+- Chuyển chế độ thông minh: Bạn đang dùng chế độ gõ Tiếng Việt trên ứng dụng A, bạn chuyển qua ứng dụng B trước đó bạn dùng chế độ gõ Tiếng Anh, XXKey sẽ tự động chuyển qua chế độ gõ Tiếng Anh cho bạn, khi bạn quay lại ứng dụng A, XXKey tất nhiên sẽ chuyển lại chế độ gõ tiếng Việt, rất cơ động.
 - Viết Hoa chữ cái đầu câu: Khi gõ văn bản dài, đôi khi bạn quên ghi hoa chữ cái đầu câu khi kết thúc một câu hoặc khi xuống hàng, tính năng này sẽ tự ghi hoa chữ cái đầu câu cho bạn, thật tuyệt vời.
 Khôi phục phím với từ sai: hỗ trợ thêm các dấu ngắt câu như dấu chấm, phẩy,...
 Sửa vài lỗi nho nhỏ khác.
 
 ##### Version 1.1 RC: (12/08/2019)
-- Chế độ “Gửi từng phím”: OpenKey bản mới (1.1) mặc định dùng kỹ thuật mới gửi dữ liệu 1 lần thay vì gửi nhiều lần cho chuỗi ký tự, nên nếu có ứng dụng nào không tương thích, hãy bật tính năng này lên, mặc định thì nên tắt vì kỹ thuật mới sẽ chạy nhanh hơn.
+- Chế độ “Gửi từng phím”: XXKey bản mới (1.1) mặc định dùng kỹ thuật mới gửi dữ liệu 1 lần thay vì gửi nhiều lần cho chuỗi ký tự, nên nếu có ứng dụng nào không tương thích, hãy bật tính năng này lên, mặc định thì nên tắt vì kỹ thuật mới sẽ chạy nhanh hơn.
 - Phục hồi phím với từ sai.
 - Nâng cao khả năng check chính tả.
 - Sửa lỗi thanh địa chỉ trình duyệt (on/off).
@@ -103,7 +103,7 @@ Sửa vài lỗi nho nhỏ khác.
 
 
 
-# OpenKey lịch sử
+# XXKey lịch sử
 
 ##### Version 1.0.17: (31/07/2019)
 - Thêm chế độ Simple Telex.

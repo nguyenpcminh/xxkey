@@ -1,18 +1,18 @@
 //
-//  OpenKeyManager.h
-//  OpenKey
+//  XXKeyManager.h
+//  XXKey
 //
 //  mist @2025
 //
 
-#ifndef OpenKeyManager_h
-#define OpenKeyManager_h
+#ifndef XXKeyManager_h
+#define XXKeyManager_h
 
 #import <Cocoa/Cocoa.h>
 
 typedef void (^CheckNewVersionCallback)(void);
 
-@interface OpenKeyManager : NSObject
+@interface XXKeyManager : NSObject
 +(BOOL)isInited;
 +(BOOL)initEventTap;
 +(BOOL)stopEventTap;
@@ -28,4 +28,4 @@ typedef void (^CheckNewVersionCallback)(void);
 +(void)checkNewVersion:(NSWindow*)parent callbackFunc:(CheckNewVersionCallback) callback;
 @end
 
-#endif /* OpenKeyManager_h */
+#endif /* XXKeyManager_h */

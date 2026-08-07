@@ -1,12 +1,12 @@
 //
 //  ViewController.m
-//  OpenKey
+//  XXKey
 //
 //  mist @2025
 //
 
 #import "ViewController.h"
-#import "OpenKeyManager.h"
+#import "XXKeyManager.h"
 #import "AppDelegate.h"
 #import "MyTextField.h"
 
@@ -84,7 +84,7 @@ extern int vPerformLayoutCompat;
     [self showTab:0];
     
     NSArray* inputTypeData = [[NSArray alloc] initWithObjects:@"Telex", @"VNI", @"Simple Telex 1", @"Simple Telex 2", nil];
-    NSArray* codeData = [OpenKeyManager getTableCodes];
+    NSArray* codeData = [XXKeyManager getTableCodes];
     
     //preset data
     [_popupInputType removeAllItems];
@@ -101,7 +101,7 @@ extern int vPerformLayoutCompat;
     self.VersionInfo.stringValue = [NSString stringWithFormat:@"Phiên bản %@ (build %@) - Ngày cập nhật %@",
     [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"],
     [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleVersion"],
-    [OpenKeyManager getBuildDate]] ;
+    [XXKeyManager getBuildDate]] ;
 }
 
 - (void)viewDidAppear {
@@ -116,7 +116,7 @@ extern int vPerformLayoutCompat;
 
 -(void)initKey {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (![OpenKeyManager initEventTap]) {
+        if (![XXKeyManager initEventTap]) {
             //self.permissionWarning.hidden = NO;
             //self.retryButton.enabled = YES;
         } else {
@@ -512,7 +512,7 @@ extern int vPerformLayoutCompat;
     self.CheckNewVersionButton.title = @"Đang kiểm tra...";
     self.CheckNewVersionButton.enabled = false;
     
-    [OpenKeyManager checkNewVersion:self.view.window callbackFunc:^{
+    [XXKeyManager checkNewVersion:self.view.window callbackFunc:^{
         self.CheckNewVersionButton.enabled = true;
         self.CheckNewVersionButton.title = @"Kiểm tra bản mới...";
     }];

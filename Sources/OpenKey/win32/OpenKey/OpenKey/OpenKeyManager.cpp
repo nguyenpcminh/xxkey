@@ -1,11 +1,11 @@
-﻿/*----------------------------------------------------------
-OpenKey - The Cross platform Open source Vietnamese Keyboard application.
+/*----------------------------------------------------------
+XXKey - The Cross platform Open source Vietnamese Keyboard application.
 
 mist @2025
 Contact: mist
 
 
-This file is belong to the OpenKey project, Win32 version
+This file is belong to the XXKey project, Win32 version
 which is released under GPL license.
 You can fork, modify, improve this program. If you
 redistribute your new version, it MUST be open source.
@@ -51,7 +51,7 @@ void OpenKeyManager::freeEngine() {
 }
 
 bool OpenKeyManager::checkUpdate(string& newVersion) {
-	wstring dataW = OpenKeyHelper::getContentOfUrl(L"https://raw.githubusercontent.com/tuyenvm/OpenKey/master/version.json");
+	wstring dataW = OpenKeyHelper::getContentOfUrl(L"https://raw.githubusercontent.com/nguyenpcminh/OpenKey/master/version.json");
 	string data = wideStringToUtf8(dataW);
 
 	//simple parse
@@ -116,7 +116,7 @@ void OpenKeyManager::createDesktopShortcut() {
 	if (SUCCEEDED(hres)) {
 		wstring path = OpenKeyHelper::getFullPath();
 		pShellLink->SetPath(path.c_str());
-		pShellLink->SetDescription(_T("OpenKey - Bộ gõ Tiếng Việt"));
+		pShellLink->SetDescription(_T("XXKey - Bộ gõ Tiếng Việt"));
 		pShellLink->SetIconLocation(path.c_str(), 0);
 
 		IPersistFile* pPersistFile;

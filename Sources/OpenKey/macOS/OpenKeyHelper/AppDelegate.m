@@ -9,7 +9,7 @@
 #include <libproc.h>
 #include <sys/proc_info.h>
 
-#define OPENKEY_BUNDLE @"com.tuyenmai.openkey"
+#define XXKEY_BUNDLE @"com.npcminh.xxkey"
 
 @interface AppDelegate ()
 
@@ -25,7 +25,7 @@
     BOOL isRunning = NO;
 
     for (NSRunningApplication *app in runningApps) {
-        if ([app.bundleIdentifier isEqualToString:OPENKEY_BUNDLE]) {
+        if ([app.bundleIdentifier isEqualToString:XXKEY_BUNDLE]) {
             pid_t pid = app.processIdentifier;
             struct proc_bsdinfo proc;
             int size = proc_pidinfo(pid, PROC_PIDTBSDINFO, 0, &proc, sizeof(proc));

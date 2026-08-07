@@ -1,11 +1,11 @@
 /*----------------------------------------------------------
-OpenKey - The Cross platform Open source Vietnamese Keyboard application.
+XXKey - The Cross platform Open source Vietnamese Keyboard application.
 
 mist @2025
 Contact: mist
 
 
-This file is belong to the OpenKey project, Win32 version
+This file is belong to the XXKey project, Win32 version
 which is released under GPL license.
 You can fork, modify, improve this program. If you
 redistribute your new version, it MUST be open source.
@@ -21,7 +21,7 @@ redistribute your new version, it MUST be open source.
 
 static BYTE* _regData = 0;
 
-static LPCTSTR sk = TEXT("SOFTWARE\\TuyenMai\\OpenKey");
+static LPCTSTR sk = TEXT("SOFTWARE\\XXKey");
 static HKEY hKey;
 static LPCTSTR _runOnStartupKeyPath = _T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
 static TCHAR _executePath[MAX_PATH];
@@ -37,7 +37,7 @@ static string _unknownProgram = "UnknownProgram";
 
 int CF_RTF = RegisterClipboardFormat(_T("Rich Text Format"));
 int CF_HTML = RegisterClipboardFormat(_T("HTML Format"));
-int CF_OPENKEY = RegisterClipboardFormat(_T("OpenKey Format"));
+int CF_OPENKEY = RegisterClipboardFormat(_T("XXKey Format"));
 
 void OpenKeyHelper::openKey() {
 	LONG nError = RegOpenKeyEx(HKEY_CURRENT_USER, sk, NULL, KEY_ALL_ACCESS, &hKey);
@@ -100,12 +100,12 @@ void OpenKeyHelper::registerRunOnStartup(const int& val) {
 		} else {
 			RegOpenKeyEx(HKEY_CURRENT_USER, _runOnStartupKeyPath, NULL, KEY_ALL_ACCESS, &hKey);
 			wstring path = getFullPath();
-			RegSetValueEx(hKey, _T("OpenKey"), 0, REG_SZ, (byte*)path.c_str(), ((DWORD)path.size() + 1) * sizeof(TCHAR));
+			RegSetValueEx(hKey, _T("XXKey"), 0, REG_SZ, (byte*)path.c_str(), ((DWORD)path.size() + 1) * sizeof(TCHAR));
 			RegCloseKey(hKey);
 		}
 	} else {
 		RegOpenKeyEx(HKEY_CURRENT_USER, _runOnStartupKeyPath, NULL, KEY_ALL_ACCESS, &hKey);
-		RegDeleteValue(hKey, _T("OpenKey"));
+		RegDeleteValue(hKey, _T("XXKey"));
 		RegCloseKey(hKey);
 		WinExec("schtasks /delete  /tn OpenKey /f", SW_HIDE);
 	}
@@ -135,8 +135,8 @@ string& OpenKeyHelper::getFrontMostAppExecuteName() {
 		return _unknownProgram;
 	}
 	_exeName = _tcsrchr(_exePath, '\\') + 1;
-	if (wcscmp(_exeName, _T("OpenKey64.exe")) == 0 ||
-		wcscmp(_exeName, _T("OpenKey32.exe")) == 0 || 
+	if (wcscmp(_exeName, _T("XXKey64.exe")) == 0 ||
+		wcscmp(_exeName, _T("XXKey32.exe")) == 0 || 
 		wcscmp(_exeName, _T("explorer.exe")) == 0) {
 		return _exeNameUtf8;
 	}

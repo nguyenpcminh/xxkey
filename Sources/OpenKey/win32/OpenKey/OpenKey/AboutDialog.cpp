@@ -1,11 +1,11 @@
-﻿/*----------------------------------------------------------
-OpenKey - The Cross platform Open source Vietnamese Keyboard application.
+/*----------------------------------------------------------
+XXKey - The Cross platform Open source Vietnamese Keyboard application.
 
 mist @2025
 Contact: mist
 
 
-This file is belong to the OpenKey project, Win32 version
+This file is belong to the XXKey project, Win32 version
 which is released under GPL license.
 You can fork, modify, improve this program. If you
 redistribute your new version, it MUST be open source.
@@ -49,7 +49,7 @@ INT_PTR AboutDialog::eventProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 		case NM_RETURN: {
 			PNMLINK link = (PNMLINK)lParam;
 			if (link->hdr.idFrom == IDC_SYSLINK_NEW_VERSION)
-				ShellExecute(NULL, _T("open"), _T("https://github.com/tuyenvm/OpenKey/releases"), NULL, NULL, SW_SHOWNORMAL);
+				ShellExecute(NULL, _T("open"), _T("https://github.com/nguyenpcminh/OpenKey/releases"), NULL, NULL, SW_SHOWNORMAL);
 		}
 		break;
 		}
@@ -84,13 +84,13 @@ void AboutDialog::onUpdateButton() {
 	if (OpenKeyManager::checkUpdate(newVersion)) {
 		WCHAR msg[256];
 		wsprintf(msg, 
-			TEXT("OpenKey Có phiên bản mới (%s), bạn có muốn cập nhật không?"),
+			TEXT("XXKey Có phiên bản mới (%s), bạn có muốn cập nhật không?"),
 			utf8ToWideString(newVersion).c_str());
 
 		int msgboxID = MessageBox(
 			hDlg,
 			msg,
-			_T("OpenKey Update"),
+			_T("XXKey Update"),
 			MB_ICONEXCLAMATION | MB_YESNO
 		);
 		if (msgboxID == IDYES) {
@@ -104,7 +104,7 @@ void AboutDialog::onUpdateButton() {
 		}
 		
 	} else {
-		MessageBox(hDlg, _T("Bạn đang dùng phiên bản mới nhất!"), _T("OpenKey Update"), MB_OK);
+		MessageBox(hDlg, _T("Bạn đang dùng phiên bản mới nhất!"), _T("XXKey Update"), MB_OK);
 	}
 	EnableWindow(hUpdateButton, true);
 }

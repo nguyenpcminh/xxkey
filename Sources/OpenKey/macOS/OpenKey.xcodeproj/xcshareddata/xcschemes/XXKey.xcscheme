@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "232EDA5321F1B33E0085D362"
-               BuildableName = "OpenKey.app"
-               BlueprintName = "OpenKey"
+               BuildableName = "XXKey.app"
+               BlueprintName = "XXKey"
                ReferencedContainer = "container:OpenKey.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,8 +31,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "232EDA5321F1B33E0085D362"
-            BuildableName = "OpenKey.app"
-            BlueprintName = "OpenKey"
+            BuildableName = "XXKey.app"
+            BlueprintName = "XXKey"
             ReferencedContainer = "container:OpenKey.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -54,8 +54,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "232EDA5321F1B33E0085D362"
-            BuildableName = "OpenKey.app"
-            BlueprintName = "OpenKey"
+            BuildableName = "XXKey.app"
+            BlueprintName = "XXKey"
             ReferencedContainer = "container:OpenKey.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -77,8 +77,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "232EDA5321F1B33E0085D362"
-            BuildableName = "OpenKey.app"
-            BlueprintName = "OpenKey"
+            BuildableName = "XXKey.app"
+            BlueprintName = "XXKey"
             ReferencedContainer = "container:OpenKey.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

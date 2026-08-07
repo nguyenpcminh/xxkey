@@ -1,11 +1,11 @@
-﻿/*----------------------------------------------------------
-OpenKey - The Cross platform Open source Vietnamese Keyboard application.
+/*----------------------------------------------------------
+XXKey - The Cross platform Open source Vietnamese Keyboard application.
 
 mist @2025
 Contact: mist
 
 
-This file is belong to the OpenKey project, Win32 version
+This file is belong to the XXKey project, Win32 version
 which is released under GPL license.
 You can fork, modify, improve this program. If you
 redistribute your new version, it MUST be open source.
@@ -75,7 +75,7 @@ DWORD WINAPI UpdateThreadFunction(LPVOID lpParam) {
 	WCHAR currentDir[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, currentDir);
 	wsprintf(path, TEXT("%s\\_OpenKey.tempf"), currentDir);
-	HRESULT res = URLDownloadToFile(NULL, L"https://raw.githubusercontent.com/tuyenvm/OpenKey/master/version.json", path, 0, NULL);
+	HRESULT res = URLDownloadToFile(NULL, L"https://raw.githubusercontent.com/nguyenpcminh/OpenKey/master/version.json", path, 0, NULL);
 
 	wstring data;
 	if (res == S_OK) {
@@ -86,7 +86,7 @@ DWORD WINAPI UpdateThreadFunction(LPVOID lpParam) {
 		DeleteFile(path);
 		data = buffer.str();
 	} else {
-		MessageBox(hDlg, _T("Có lỗi trong quá trình cập nhật, vui lòng thử lại sau!"), _T("OpenKey Update"), MB_OK);
+		MessageBox(hDlg, _T("Có lỗi trong quá trình cập nhật, vui lòng thử lại sau!"), _T("XXKey Update"), MB_OK);
 		ExitProcess(0);
 		return 0;
 	}
@@ -101,7 +101,7 @@ DWORD WINAPI UpdateThreadFunction(LPVOID lpParam) {
 	
 	//download zip file
 	WCHAR updateUrl[MAX_PATH];
-	wsprintf(updateUrl, TEXT("https://github.com/tuyenvm/OpenKey/releases/download/%s/OpenKey%s-Windows.zip"),
+	wsprintf(updateUrl, TEXT("https://github.com/nguyenpcminh/OpenKey/releases/download/%s/OpenKey%s-Windows.zip"),
 		versionName.c_str(),
 		versionName.c_str());
 	wsprintf(path, TEXT("%s\\_OpenKeyUpdate.zip"), currentDir);
@@ -119,10 +119,10 @@ DWORD WINAPI UpdateThreadFunction(LPVOID lpParam) {
 		DeleteFile(L"_OpenKeyUpdate\\OpenKey64.exe");
 		DeleteFile(L"_OpenKeyUpdate\\OpenKey32.exe");
 		RemoveDirectory(L".\\_OpenKeyUpdate");
-		MessageBox(hDlg, _T("Bạn đã cập nhật OpenKey bản mới nhất thành công!"), _T("OpenKey Update"), MB_OK);
+		MessageBox(hDlg, _T("Bạn đã cập nhật OpenKey bản mới nhất thành công!"), _T("XXKey Update"), MB_OK);
 		ExitProcess(0);
 	} else {
-		MessageBox(hDlg, _T("Có lỗi trong quá trình cập nhật, vui lòng thử lại sau!"), _T("OpenKey Update"), MB_OK);
+		MessageBox(hDlg, _T("Có lỗi trong quá trình cập nhật, vui lòng thử lại sau!"), _T("XXKey Update"), MB_OK);
 		ExitProcess(0);
 	}
 	return 0;

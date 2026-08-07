@@ -1,6 +1,6 @@
 //
 //  AppDelegate.h
-//  OpenKey
+//  XXKey
 //
 //  mist @2025
 //
@@ -8,7 +8,7 @@
 #import <Cocoa/Cocoa.h>
 #import "ViewController.h"
 
-#define OPENKEY_BUNDLE @"com.tuyenmai.openkey"
+#define XXKEY_BUNDLE @"com.npcminh.xxkey"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
