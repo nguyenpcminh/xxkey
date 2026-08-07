@@ -177,14 +177,29 @@ extern "C" {
     }
 
     BOOL isSpotlightVisible() {
+        // CGWindowListCopyWindowInfo is expensive and is called on every key
+        // press (via shouldUseRecommendWorkaround / shouldUseSelectionReplacement).
+        // Cache the result briefly: Spotlight being shown or hidden does not
+        // change between keystrokes, so a 0.5s TTL avoids the per-key cost while
+        // still responding to Spotlight appearing/disappearing in real time.
+        static BOOL cachedResult = NO;
+        static CFAbsoluteTime cachedAt = 0;
+        CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+        if (now - cachedAt < 0.5) {
+            return cachedResult;
+        }
         NSArray *windows = CFBridgingRelease(CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
                                                                         kCGNullWindowID));
+        BOOL visible = NO;
         for (NSDictionary *window in windows) {
             if ([[window objectForKey:(__bridge NSString *)kCGWindowOwnerName] isEqualToString:@"Spotlight"]) {
-                return true;
+                visible = YES;
+                break;
             }
         }
-        return false;
+        cachedResult = visible;
+        cachedAt = now;
+        return visible;
     }
 
     BOOL shouldUseRecommendWorkaround(NSString* topApp) {
