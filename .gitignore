@@ -1,4 +1,4 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
@@ -14,3 +14,6 @@
 
 # Xcode user data
 xcuserdata/
+/Sources/OpenKey/macOS/BuildData/
+build/
+DerivedData/
