@@ -2,8 +2,7 @@
 //  ConvertTool.h
 //  OpenKey
 //
-//  Created by Tuyen on 9/4/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #ifndef ConvertTool_h

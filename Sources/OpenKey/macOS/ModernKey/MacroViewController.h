@@ -2,8 +2,7 @@
 //  MacroViewController.h
 //  OpenKey
 //
-//  Created by Tuyen on 8/4/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #import <Cocoa/Cocoa.h>

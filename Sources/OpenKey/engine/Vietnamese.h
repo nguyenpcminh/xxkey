@@ -2,8 +2,7 @@
 //  Vietnamese.h
 //  OpenKey
 //
-//  Created by Tuyen on 1/19/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #ifndef Vietnamese_h

@@ -1,9 +1,8 @@
 //
 //  ViewController.m
-//  ModernKey
+//  OpenKey
 //
-//  Created by Tuyen on 1/18/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #import "ViewController.h"
@@ -507,22 +506,6 @@ extern int vPerformLayoutCompat;
             self.RunOnStartupButton.state = NSControlStateValueOn;
         }
     }];
-}
-
-- (IBAction)onHomePageLink:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"https://open-key.org"]];
-}
-
-- (IBAction)onFanpageLink:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"https://www.facebook.com/OpenKeyVN"]];
-}
-
-- (IBAction)onEmailLink:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"mailto:maivutuyen.91@gmail.com"]];
-}
-
-- (IBAction)onSourceCode:(id)sender {
-  [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"https://github.com/tuyenvm/OpenKey"]];
 }
 
 - (IBAction)onCheckNewVersionButton:(id)sender {

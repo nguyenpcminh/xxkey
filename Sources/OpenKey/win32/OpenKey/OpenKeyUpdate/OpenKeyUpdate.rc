@@ -79,7 +79,7 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
     LTEXT           "OpenKeyUpdate, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (c) 2019",IDC_STATIC,42,26,114,8
+    LTEXT           "mist @2025",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
 
@@ -177,7 +177,7 @@ BEGIN
             VALUE "FileDescription", "Update Helper for OpenKey"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "OpenKeyUpdate.exe"
-            VALUE "LegalCopyright", "Copyright (C) 2019"
+            VALUE "LegalCopyright", "mist @2025"
             VALUE "OriginalFilename", "OpenKeyUpdate.exe"
             VALUE "ProductName", "OpenKey Auto Update"
             VALUE "ProductVersion", "1.0.0.1"

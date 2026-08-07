@@ -1,9 +1,8 @@
 //
 //  main.m
-//  OpenKeyHelper
+//  OpenKey
 //
-//  Created by Tuyen on 2/1/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #import <Cocoa/Cocoa.h>

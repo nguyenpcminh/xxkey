@@ -2,8 +2,7 @@
 //  AboutViewController.m
 //  OpenKey
 //
-//  Created by Tuyen on 2/15/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #import "AboutViewController.h"
@@ -26,14 +25,6 @@
     
     NSInteger dontCheckUpdate = [[NSUserDefaults standardUserDefaults] integerForKey:@"DontCheckUpdate"];
     self.CheckUpdateOnStatus.state = dontCheckUpdate ? NSControlStateValueOff :NSControlStateValueOn;
-}
-
-- (IBAction)onHomePage:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"https://github.com/tuyenvm/OpenKey"]];
-}
-
-- (IBAction)onFanPage:(id)sender {
-    [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:@"https://www.facebook.com/OpenKeyVN"]];
 }
 
 - (IBAction)onLatestReleaseVersion:(id)sender {

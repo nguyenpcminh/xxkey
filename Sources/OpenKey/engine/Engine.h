@@ -2,8 +2,7 @@
 //  Engine.h
 //  OpenKey
 //
-//  Created by Tuyen on 1/18/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #ifndef Engine_h

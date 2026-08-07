@@ -1,5 +1,5 @@
 
-# [OpenKey](http://open-key.org)
+# OpenKey
 ### [Download bản mới nhất](https://github.com/tuyenvm/OpenKey/releases)
 [![GitHub release](https://img.shields.io/github/v/release/tuyenvm/OpenKey.svg)](https://github.com/tuyenvm/OpenKey/releases/latest)
 
@@ -87,19 +87,6 @@ $ brew upgrade --cask openkey
 OpenKey cần cấp quyền, vào *System Preferences -> Security & Privacy -> Accessibility*, kích hoạt `OpenKey.app`. **Không tắt nó khi đang dùng OpenKey**.
 ![Guide](https://raw.githubusercontent.com/tuyenvm/tuyenvm.github.io/master/images/openkey-guide.png "Accessibility").
 
-## Tác giả
-- Mai Vũ Tuyên.
-- Mọi góp ý, gửi cho mình qua maivutuyen.91@gmail.com  
-- Fanpage: [https://www.facebook.com/OpenKeyVN](https://www.facebook.com/OpenKeyVN)
-
 ## Liên kết
 - [OpenKey cho Windows, xem chi tiết tại đây](https://github.com/tuyenvm/OpenKey/tree/master/Sources/OpenKey/win32)
 - [OpenKey cho Linux (đang phát triển)](https://github.com/tuyenvm/OpenKey/tree/master/Sources/OpenKey/linux)
-## Một điều nhỏ nhoi
-Đừng quên ủng hộ tác giả bằng cách mua ly cafe cho tác giả tỉnh ngủ nhé:  
-[Buy me a coffee ^^](https://tuyenvm.github.io/donate.html)  
-[Redbull cũng được ^^](https://paypal.me/tuyenmai)  
-Hoặc trực tiếp qua ví momo:   
-![Donate by momo](https://tuyenvm.github.io/images/momo.png "Momo").   
-
-Cảm ơn các bạn rất nhiều.

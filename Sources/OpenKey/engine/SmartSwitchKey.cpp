@@ -2,8 +2,7 @@
 //  SmartSwitchKey.cpp
 //  OpenKey
 //
-//  Created by Tuyen on 8/13/19.
-//  Copyright © 2019 Tuyen Mai. All rights reserved.
+//  mist @2025
 //
 
 #include "SmartSwitchKey.h"

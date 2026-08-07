@@ -58,7 +58,7 @@ Mặc định, OpenKey cho phép gõ với chế độ bỏ dấu tự do, khôn
 ![Công cụ chuyển mã](https://raw.githubusercontent.com/tuyenvm/tuyenvm.github.io/master/images/win32_3.png "Convert tool")
 
 ## Thông tin
-- Dự án OpenKey ra đời vào ngày 18/01/2019. OpenKey được viết lại hoàn toàn mới bởi tác giả Mai Vũ Tuyên. Mục đích ra đời của OpenKey là để khắc phục lỗi gạch chân khó chịu do cơ chế `preedit` gây ra trên hệ điều hành macOS
+- Dự án OpenKey ra đời vào ngày 18/01/2019. OpenKey được viết lại hoàn toàn mới. Mục đích ra đời của OpenKey là để khắc phục lỗi gạch chân khó chịu do cơ chế `preedit` gây ra trên hệ điều hành macOS
 - Phiên bản đầu tiên cho hệ điều hành macOS được phát hành trên Github vào ngày 01/02/2019  
 Trải qua nhiều lần cập nhật và phát triển, ngày 31/07/2019, OpenKey cho macOS được mọi người biết đến qua trang tinhte.vn  
 - Với nhiều ý kiến đóng góp từ cộng đồng, OpenKey cho macOS phát triển tới phiên bản 1.5 đã đầy đủ các tính năng của một bộ gõ chuẩn, tiện lợi.  
@@ -70,8 +70,3 @@ Trải qua nhiều lần cập nhật và phát triển, ngày 31/07/2019, OpenK
 ## Giấy phép
 OpenKey for Windows được phát hành dưới giấy phép GPL, điều này nghĩa là bạn hoàn toàn có thể tự do tải mã nguồn về chỉnh sửa, cải tiến theo mục đích của bạn. Nếu bạn tái phân phối bản cải tiến của bạn, bạn **phải** công bố mã nguồn và credit OpenKey bản gốc.
 
-## Một điều nữa
-Đừng quên ủng hộ tác giả bằng cách mua ly cafe cho tác giả tỉnh ngủ nhé: [Gửi cafe](https://paypal.me/tuyenmai)  
-Hoặc trực tiếp qua ví momo:   
-![Donate by momo](https://tuyenvm.github.io/images/momo.png "Momo").   
-Cảm ơn các bạn.

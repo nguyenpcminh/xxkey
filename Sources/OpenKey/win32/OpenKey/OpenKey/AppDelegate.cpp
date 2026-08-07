@@ -1,10 +1,9 @@
 ﻿/*----------------------------------------------------------
 OpenKey - The Cross platform Open source Vietnamese Keyboard application.
 
-Copyright (C) 2019 Mai Vu Tuyen
-Contact: maivutuyen.91@gmail.com
-Github: https://github.com/tuyenvm/OpenKey
-Fanpage: https://www.facebook.com/OpenKeyVN
+mist @2025
+Contact: mist
+
 
 This file is belong to the OpenKey project, Win32 version
 which is released under GPL license.
