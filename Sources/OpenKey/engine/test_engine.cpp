@@ -67,6 +67,13 @@ static void typeKey(Uint16 key) {
     vKeyHandleEvent(vKeyEvent::Keyboard, vKeyEventState::KeyDown, key, 0, false);
 
     if (HookState.code == vDoNothing) {
+        if (HookState.extCode == 2) {
+            // Backspace: the OS itself deletes the on-screen character; the
+            // engine only updated its internal buffer (TypingWord/_index).
+            if (!screen.empty())
+                screen.pop_back();
+            return;
+        }
         // No transformation: the key event is passed through untouched,
         // so the plain character appears on screen.
         wchar_t ch = (wchar_t)keyCodeToCharacter(key);
@@ -231,6 +238,50 @@ int main() {
     newSession();
     typeText("bieecs");
     check(screen == L"biếc", "bieecs -> biếc");
+
+    // --- Daily-use phrases (Telex) ---
+    newSession();
+    typeText("xin chaof");
+    check(screen == L"xin chào", "xin chaof -> xin chào");
+    newSession();
+    typeText("dduowcj");
+    check(screen == L"được", "dduowcj -> được");
+    newSession();
+    typeText("nguoiwf");
+    check(screen == L"người", "nguoiwf -> người");
+    newSession();
+    typeText("thoiwf gian");
+    check(screen == L"thời gian", "thoiwf gian -> thời gian");
+    newSession();
+    typeText("nghieeng");
+    check(screen == L"nghiêng", "nghieeng -> nghiêng");
+    newSession();
+    typeText("truyeenj");
+    check(screen == L"truyện", "truyeenj -> truyện");
+
+    // --- Backspace then continue typing (OS deletes on-screen char) ---
+    newSession();
+    typeText("vieet");
+    typeKey(KEY_DELETE); // remove 't' (OS deletes on screen)
+    typeKey(KEY_T);
+    typeKey(KEY_J);
+    check(screen == L"việt", "vieet+DEL+tj -> việt");
+
+    // --- VNI mode ---
+    vInputType = vVNI;
+    newSession();
+    typeText("tie61ng");
+    check(screen == L"tiếng", "VNI tie61ng -> tiếng");
+    newSession();
+    typeText("vie65c");
+    check(screen == L"việc", "VNI vie65c -> việc");
+    newSession();
+    typeText("nu7o71c");
+    check(screen == L"nước", "VNI nu7o71c -> nước");
+    newSession();
+    typeText("d9");
+    check(screen == L"đ", "VNI d9 -> đ");
+    vInputType = vTelex;
 
     if (_failCount == 0)
         printf("ALL %d CHECKS PASSED\n", _checkCount);
