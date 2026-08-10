@@ -1,0 +1,13 @@
+[package]
+name = "vietime-engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Vietnamese input engine — pure Rust, no_std, ported from OpenKey/XXKey C++ core"
+
+# no_std core: the engine itself never allocates; callers provide buffers.
+# Tests run on std so we can use Vec/println for verification.
+[lib]
+name = "vietime_engine"
+
+[dependencies]
