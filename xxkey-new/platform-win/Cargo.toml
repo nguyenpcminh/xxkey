@@ -1,9 +1,0 @@
-[package]
-name = "platform-win"
-version.workspace = true
-edition.workspace = true
-license.workspace = true
-description = "XXKey platform adapter (platform-win)"
-
-[dependencies]
-vietime-engine = { path = "../vietime-engine" }

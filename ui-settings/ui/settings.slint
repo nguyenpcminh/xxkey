@@ -1,0 +1,83 @@
+import { Button, CheckBox, ComboBox, GroupBox, HorizontalBox, VerticalBox } from "std-widgets.slint";
+
+export component MainWindow inherits Window {
+    title: "Cấu hình Bộ Gõ XXKey";
+    width: 420px;
+    height: 340px;
+    
+    // Properties to exchange data with Rust
+    in-out property <int> input-type: 0;
+    in-out property <bool> modern-orthography: true;
+    in-out property <bool> check-spelling: true;
+    in-out property <bool> use-macro: false;
+    
+    callback save-settings(int, bool, bool, bool);
+    callback close-window();
+
+    VerticalBox {
+        padding: 15px;
+        spacing: 12px;
+
+        Text {
+            text: "Cấu hình Bộ Gõ XXKey";
+            font-size: 18px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+
+        GroupBox {
+            title: "Kiểu gõ";
+            ComboBox {
+                model: ["Telex", "VNI", "Simple Telex 1", "Simple Telex 2"];
+                current-index: root.input-type;
+                selected(val) => {
+                    if (val == "Telex") { root.input-type = 0; }
+                    else if (val == "VNI") { root.input-type = 1; }
+                    else if (val == "Simple Telex 1") { root.input-type = 2; }
+                    else if (val == "Simple Telex 2") { root.input-type = 3; }
+                }
+            }
+        }
+
+        GroupBox {
+            title: "Tùy chọn gõ tiếng Việt";
+            VerticalBox {
+                spacing: 8px;
+                padding: 5px;
+                CheckBox {
+                    text: "Sử dụng chính tả hiện đại (Modern Orthography)";
+                    checked: root.modern-orthography;
+                    toggled => { root.modern-orthography = !root.modern-orthography; }
+                }
+                CheckBox {
+                    text: "Kiểm tra chính tả (Check spelling)";
+                    checked: root.check-spelling;
+                    toggled => { root.check-spelling = !root.check-spelling; }
+                }
+                CheckBox {
+                    text: "Cho phép gõ tắt (Macro)";
+                    checked: root.use-macro;
+                    toggled => { root.use-macro = !root.use-macro; }
+                }
+            }
+        }
+
+        HorizontalBox {
+            alignment: end;
+            spacing: 10px;
+            Button {
+                text: "Lưu cấu hình";
+                primary: true;
+                clicked => {
+                    root.save-settings(root.input-type, root.modern-orthography, root.check-spelling, root.use-macro);
+                }
+            }
+            Button {
+                text: "Đóng";
+                clicked => {
+                    root.close-window();
+                }
+            }
+        }
+    }
+}

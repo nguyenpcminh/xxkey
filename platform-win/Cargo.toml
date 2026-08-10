@@ -1,0 +1,19 @@
+[package]
+name = "platform-win"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "XXKey platform adapter (platform-win)"
+
+[[bin]]
+name = "xxkey-daemon"
+path = "src/main.rs"
+
+[dependencies]
+vietime-engine = { path = "../vietime-engine" }
+windows-sys = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_System_LibraryLoader"
+] }
