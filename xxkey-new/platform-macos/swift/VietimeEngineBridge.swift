@@ -81,11 +81,13 @@ public class VietimeEngineBridge {
         let extCodeRaw = vietime_get_hook_state_ext_code(sPtr)
         
         var chars: [Character] = []
-        for i in 0..<newCharCount {
-            let val = vietime_get_hook_state_char_at(sPtr, UInt32(i))
-            let chCode = (val & 0x200_0000 != 0) ? (val & 0xFFFF) : UInt32(vietime_key_code_to_char(val))
-            if let unicodeChar = UnicodeScalar(chCode) {
-                chars.append(Character(unicodeChar))
+        if newCharCount > 0 {
+            for i in (0..<newCharCount).reversed() {
+                let val = vietime_get_hook_state_char_at(sPtr, UInt32(i))
+                let chCode = (val & 0x200_0000 != 0) ? (val & 0xFFFF) : UInt32(vietime_key_code_to_char(val))
+                if let unicodeChar = UnicodeScalar(chCode) {
+                    chars.append(Character(unicodeChar))
+                }
             }
         }
         
