@@ -282,6 +282,9 @@ int main() {
     typeText("d9");
     check(screen == L"đ", "VNI d9 -> đ");
     vInputType = vTelex;
+    newSession();
+    typeText("texx");
+    check(screen == L"tex", "texx -> tex");
 
     if (_failCount == 0)
         printf("ALL %d CHECKS PASSED\n", _checkCount);
