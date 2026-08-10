@@ -1,9 +1,9 @@
-# Makefile to build VietimeApp (SwiftUI App with Rust Core Engine) for macOS
+# Makefile to build XXKey (SwiftUI App with Rust Core Engine) for macOS
 
 SHELL := /bin/bash
 
 # Target binary paths
-APP_NAME := VietimeApp
+APP_NAME := XXKey
 BUILD_DIR := build
 APP_BUNDLE := $(BUILD_DIR)/$(APP_NAME).app
 CARGO_TARGET_DIR := target
@@ -42,7 +42,7 @@ build-app: build-rust
 	@echo '    <key>CFBundleExecutable</key>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <string>$(APP_NAME)</string>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <key>CFBundleIdentifier</key>' >> $(APP_BUNDLE)/Contents/Info.plist
-	@echo '    <string>com.vietime.app</string>' >> $(APP_BUNDLE)/Contents/Info.plist
+	@echo '    <string>com.xxkey.app</string>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <key>CFBundleName</key>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <string>$(APP_NAME)</string>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <key>CFBundlePackageType</key>' >> $(APP_BUNDLE)/Contents/Info.plist

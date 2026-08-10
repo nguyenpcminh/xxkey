@@ -30,7 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let menu = NSMenu()
         
-        let titleItem = NSMenuItem(title: "Bộ gõ Vietime (Rust Core)", action: nil, keyEquivalent: "")
+        let titleItem = NSMenuItem(title: "Bộ gõ XXKey (Rust Core)", action: nil, keyEquivalent: "")
         titleItem.isEnabled = false
         menu.addItem(titleItem)
         menu.addItem(NSMenuItem.separator())
@@ -331,7 +331,7 @@ struct SettingsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Cấu hình Bộ Gõ Vietime")
+            Text("Cấu hình Bộ Gõ XXKey")
                 .font(.title2)
                 .fontWeight(.bold)
             
@@ -367,7 +367,7 @@ struct SettingsView: View {
 }
 
 @main
-struct VietimeApp: App {
+struct XXKeyApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
