@@ -2,9 +2,9 @@
 
 ### Bộ gõ tiếng Việt mã nguồn mở tối ưu cho macOS, Windows và Linux (Core Rust)
 
-**XXKey** là bộ gõ tiếng Việt mã nguồn mở thế hệ mới, được thiết kế lại toàn bộ phần cốt lõi bằng ngôn ngữ **Rust** mang lại tính an toàn bộ nhớ vượt trội, hiệu năng cực cao và khả năng tương thích đa nền tảng hoàn hảo (macOS, Windows, Linux).
+**XXKey** là bộ gõ tiếng Việt mã nguồn mở thế hệ mới, ban đầu được phát triển dưới dạng một bản fork từ dự án **OpenKey** (của tác giả _tuyenvm_). 
 
-Lõi xử lý phím **`vietime-engine`** của XXKey được port chuẩn xác từng byte từ công cụ gõ OpenKey (C++), vượt qua bộ kiểm thử tự động (differential testing) với hơn 1.800 test vector để đảm bảo hành vi gõ dấu tiếng Việt chính xác 100%, không bị lỗi gạch chân hay mất phím.
+Để tối ưu hóa hiệu năng, tăng cường an toàn bộ nhớ và mang lại khả năng tương thích đa nền tảng hoàn hảo (macOS, Windows, Linux), dự án đã tiến hành thiết kế và chuyển đổi toàn bộ phần lõi xử lý phím sang ngôn ngữ **Rust** (lấy tên là **`vietime-engine`**). Lõi xử lý này kế thừa chuẩn xác thuật toán xử lý phím gốc của OpenKey (C++), vượt qua bộ kiểm thử tự động (differential testing) với hơn 1.800 test vector để đảm bảo hành vi gõ dấu tiếng Việt chính xác 100%, không bị lỗi gạch chân hay mất phím.
 
 ---
 
