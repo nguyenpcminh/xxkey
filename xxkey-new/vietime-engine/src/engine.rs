@@ -1399,11 +1399,11 @@ impl Engine {
         if is_mark_key(self.cfg.input_type, data) {
             let all_entries = [
                 vowel_for_mark_table(KEY_A),
-                vowel_for_mark_table(KEY_O),
                 vowel_for_mark_table(KEY_E),
-                vowel_for_mark_table(KEY_I),
-                vowel_for_mark_table(KEY_U),
                 vowel_for_mark_table(KEY_Y),
+                vowel_for_mark_table(KEY_O),
+                vowel_for_mark_table(KEY_U),
+                vowel_for_mark_table(KEY_I),
             ];
             self.is_correct = false;
             self.is_changed = false;
@@ -1526,21 +1526,20 @@ impl Engine {
             self.is_correct = false;
             return;
         }
-        self.k = self.index - 1;
+        let mut k = self.index as isize - 1;
         for j in (0..charset.len()).rev() {
             let mut mask = 0u16;
             if self.cfg.quick_end_consonant {
                 mask |= END_CONSONANT_MASK;
             }
-            if (charset[j] & !mask) != self.chr(self.k) {
+            if k < 0 || (charset[j] & !mask) != self.chr(k as usize) {
                 self.is_correct = false;
                 return;
             }
-            if self.k == 0 {
-                self.k = 0;
+            k -= 1;
+            if k < 0 {
                 break;
             }
-            self.k -= 1;
         }
 
         // limit mark for end consonant: "C", "T"
@@ -1555,9 +1554,13 @@ impl Engine {
             }
         }
 
-        if self.is_correct && self.k < self.index && self.chr(self.k) == self.chr(self.k + 1) {
-            self.is_correct = false;
+        if self.is_correct && k >= 0 {
+            let uk = k as usize;
+            if self.chr(uk) == self.chr(uk + 1) {
+                self.is_correct = false;
+            }
         }
+        self.k = if k < 0 { 0 } else { k as usize };
     }
 
     /// Port of `removeMark`.

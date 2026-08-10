@@ -11,7 +11,7 @@
 //!   cp golden.txt <this dir>/data/golden.txt
 
 use vietime_engine::datatype::*;
-use vietime_engine::engine::{Engine, EngineConfig};
+use vietime_engine::engine::Engine;
 use vietime_engine::keycode::*;
 use vietime_engine::vietnamese::key_code_to_character;
 
@@ -135,10 +135,13 @@ fn run_all(only_telex: bool) -> (usize, Vec<(u32, bool, String, String, String)>
             continue;
         }
         let (meta, rest) = line.split_once('|').unwrap();
-        let mut it = meta.split_whitespace();
-        let it_idx: u32 = it.next().unwrap().parse().unwrap();
-        let modern: u32 = it.next().unwrap().parse().unwrap();
-        let seq: String = it.collect::<Vec<_>>().join(" ");
+        let parts: Vec<&str> = meta.splitn(3, ' ').collect();
+        if parts.len() < 3 {
+            continue;
+        }
+        let it_idx: u32 = parts[0].parse().unwrap();
+        let modern: u32 = parts[1].parse().unwrap();
+        let seq = parts[2];
         if only_telex && it_idx != 0 {
             continue;
         }
@@ -154,7 +157,7 @@ fn run_all(only_telex: bool) -> (usize, Vec<(u32, bool, String, String, String)>
         if got == expected_s {
             passed += 1;
         } else {
-            failures.push((it_idx, modern != 0, seq.clone(), expected_s, got));
+            failures.push((it_idx, modern != 0, seq.to_string(), expected_s, got));
         }
     }
     (passed, failures)
