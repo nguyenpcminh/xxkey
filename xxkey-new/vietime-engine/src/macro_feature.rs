@@ -196,6 +196,14 @@ impl MacroManager {
         false
     }
 
+    /// Get all macros as a list of tuples containing (key, macro_text, macro_content).
+    pub fn get_all_macros(&self) -> Vec<(Vec<u32>, String, String)> {
+        self.map
+            .iter()
+            .map(|(k, v)| (k.clone(), v.macro_text.clone(), v.macro_content.clone()))
+            .collect()
+    }
+
     /// Update macro content codes when the active code table changes.
     pub fn on_table_code_change(&mut self, code_table_idx: usize) {
         for data in self.map.values_mut() {

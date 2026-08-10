@@ -188,5 +188,17 @@ pub fn is_mark_key(input_type: InputType, code: u16) -> bool {
 /// Number key (top row digits 0-9).
 #[inline]
 pub fn is_number_key(code: u16) -> bool {
-    code >= crate::keycode::KEY_1 && code <= crate::keycode::KEY_0
+    matches!(
+        code,
+        crate::keycode::KEY_1
+            | crate::keycode::KEY_2
+            | crate::keycode::KEY_3
+            | crate::keycode::KEY_4
+            | crate::keycode::KEY_5
+            | crate::keycode::KEY_6
+            | crate::keycode::KEY_7
+            | crate::keycode::KEY_8
+            | crate::keycode::KEY_9
+            | crate::keycode::KEY_0
+    )
 }
