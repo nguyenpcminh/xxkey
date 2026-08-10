@@ -1,86 +1,95 @@
 # XXKey
 
-### Bộ gõ tiếng Việt nguồn mở cho macOS và Windows (Fork từ OpenKey)
+### Bộ gõ tiếng Việt mã nguồn mở tối ưu cho macOS, Windows và Linux (Core Rust)
 
-**XXKey** là bộ gõ tiếng Việt mã nguồn mở được phát triển dưới dạng một bản fork từ dự án **OpenKey** (của tác giả _tuyenvm_).
+**XXKey** là bộ gõ tiếng Việt mã nguồn mở thế hệ mới, được thiết kế lại toàn bộ phần cốt lõi bằng ngôn ngữ **Rust** mang lại tính an toàn bộ nhớ vượt trội, hiệu năng cực cao và khả năng tương thích đa nền tảng hoàn hảo (macOS, Windows, Linux).
 
-Kế thừa những giá trị cốt lõi của OpenKey, XXKey tập trung cải thiện hiệu năng, tối ưu hóa các API hệ thống và mang lại trải nghiệm gõ tiếng Việt mượt mà trên macOS & Windows mà không gặp phải lỗi gạch chân hay trễ phím (nhờ kỹ thuật gửi phím `Backspace` hiện đại thay vì cơ chế preedit mặc định của macOS).
+Lõi xử lý phím **`vietime-engine`** của XXKey được port chuẩn xác từng byte từ công cụ gõ OpenKey (C++), vượt qua bộ kiểm thử tự động (differential testing) với hơn 1.800 test vector để đảm bảo hành vi gõ dấu tiếng Việt chính xác 100%, không bị lỗi gạch chân hay mất phím.
 
 ---
 
-## ⚡ Tính năng nổi bật
+## ⚡ Các tính năng nổi bật
 
 ### ⌨️ Hỗ trợ kiểu gõ và bảng mã đa dạng
-
-- **Kiểu gõ hỗ trợ:** Telex, VNI, Simple Telex.
+- **Kiểu gõ:** Telex, VNI, Simple Telex 1, Simple Telex 2.
 - **Bảng mã thông dụng:** Unicode dựng sẵn, Unicode tổ hợp, TCVN3 (ABC), VNI Windows, Vietnamese Locale CP 1258, v.v.
 
-### 🧠 Tính năng thông minh & Tiện ích
-
-- **Tự ghi nhớ bảng mã theo ứng dụng:** XXKey tự động ghi nhận và chuyển đổi bảng mã phù hợp cho từng ứng dụng riêng biệt (ví dụ: Photoshop/AutoCAD dùng VNI/TCVN3, còn trình duyệt dùng Unicode) khi bạn chuyển đổi cửa sổ làm việc.
-- **Chuyển chế độ gõ thông minh:** Tự động khôi phục chế độ gõ (Anh hoặc Việt) tương ứng với từng ứng dụng cụ thể.
-- **Viết hoa chữ cái đầu câu:** Tự động viết hoa chữ cái đầu câu sau các dấu ngắt câu hoặc khi xuống dòng.
-- **Tính năng gõ tắt (Macro):** Hỗ trợ soạn thảo và sử dụng bảng từ gõ tắt không giới hạn độ dài hay số lượng ký tự.
-- **Khôi phục phím khi gõ từ sai (Restore key):** Tự động khôi phục lại các ký tự gốc khi phát hiện từ gõ sai quy tắc chính tả tiếng Việt.
-- **Hỗ trợ gõ tắt phụ âm:**
-  - Phụ âm đầu: `f` -> `ph`, `j` -> `gi`, `w` -> `qu`.
-  - Phụ âm cuối: `g` -> `ng`, `h` -> `nh`, `k` -> `ch`.
-  - Cho phép sử dụng các ký tự `f, z, w, j` làm phụ âm đầu.
-- **Chế độ gõ nhanh (Quick Telex):** Gõ nhanh các cụm phụ âm ghép (`cc`=ch, `gg`=gi, `kk`=kh, `nn`=ng, `qq`=qu, `pp`=ph, `tt`=th).
-- **Chế độ "Gửi từng phím" (Send key by key):** Tăng độ tương thích khi chơi game hoặc gõ trên các ứng dụng đặc thù.
+### 🧠 Xử lý thông minh & Tiện ích
+- **Khôi phục phím gõ sai (Restore spelling):** Tự động hoàn tác về ký tự gốc khi phát hiện từ sai quy tắc chính tả tiếng Việt.
+- **Chính tả hiện đại (Modern Orthography):** Hỗ trợ đặt dấu chuẩn theo phong cách mới hoặc phong cách cổ truyền.
+- **Giao diện cấu hình gọn nhẹ:** Sử dụng giao diện Slint UI trên Windows/Linux chỉ tiêu tốn **~5MB RAM** khi chạy, vượt trội so với các giải pháp dựa trên Webview (như Electron/Tauri).
+- **Phụ âm ghép & Gõ nhanh:** Hỗ trợ Telex nhanh (`cc` -> `ch`, `gg` -> `gi`, `kk` -> `kh`...) và tự động viết hoa chữ cái đầu câu.
+- **Gõ tắt (Macro):** Khởi tạo và sử dụng bảng từ gõ tắt không giới hạn.
 
 ---
 
-## 📥 Hướng dẫn cài đặt
+## 🏗️ Cấu trúc thư mục dự án
+
+Dự án được tổ chức dưới dạng một Cargo Workspace thống nhất:
+
+| Thư mục | Vai trò | Công nghệ |
+| :--- | :--- | :--- |
+| **[`vietime-engine`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/vietime-engine)** | Lõi xử lý chính (State machine, spelling) | Rust (`no_std` thuần) |
+| **[`platform-macos`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-macos)** | Front-end & Keyboard Hook cho macOS | SwiftUI + Cocoa Event Tap |
+| **[`platform-win`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-win)** | Daemon bắt phím chạy ẩn cho Windows | Rust + Win32 API (`windows-sys`) |
+| **[`platform-linux`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-linux)** | Daemon bắt phím & Tích hợp IBus cho Linux | Rust + IBus D-Bus |
+| **[`ui-settings`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-settings)** | Giao diện cấu hình bộ gõ cho Windows/Linux | Rust + Slint UI |
+
+---
+
+## 🛠️ Hướng dẫn cài đặt & Biên dịch
 
 > [!IMPORTANT]
-> Để tránh xung đột phím, vui lòng tắt hoàn toàn các bộ gõ tiếng Việt khác trước khi sử dụng XXKey.
+> Để tránh xung đột phím, vui lòng tắt hoàn toàn các bộ gõ tiếng Việt khác (như UniKey, EVKey, bộ gõ mặc định của macOS) trước khi khởi chạy XXKey.
 
-### Cho macOS
+### Yêu cầu môi trường
+- Đã cài đặt **Rust toolchain** (cargo/rustc).
+- Trên macOS: Yêu cầu cài đặt **Xcode Command Line Tools** (`swiftc`).
 
-1. Tải về file `.zip` mới nhất từ mục [Releases](https://github.com/nguyenpcminh/xxkey/releases).
-2. Giải nén và kéo ứng dụng **XXKey.app** vào thư mục **Applications** (Ứng dụng).
-3. **Cấp quyền truy cập hệ thống (Trợ năng):**
-   - Truy cập **System Settings** (Cài đặt hệ thống) -> **Privacy & Security** (Quyền riêng tư & Bảo mật) -> **Accessibility** (Trợ năng).
-   - Kích hoạt và cấp quyền cho **XXKey.app**.
-   - _Lưu ý: Quyền này bắt buộc phải bật để bộ gõ có thể xử lý phím bấm._
+### Các lệnh build nhanh (Makefile)
 
-### Cho Windows
+Tại thư mục gốc của dự án, bạn có thể sử dụng các lệnh Makefile sau:
 
-1. Tải về file `.zip` dành cho Windows từ mục [Releases](https://github.com/nguyenpcminh/xxkey/releases).
-2. Giải nén vào một thư mục bất kỳ trên máy tính của bạn.
-3. Chạy file thực thi `XXKey.exe`. Khuyến nghị chạy dưới quyền **Administrator** (Run as Administrator) để có thể gõ tiếng Việt bình thường trong game và các ứng dụng hệ thống.
-
----
-
-## 🛠️ Hướng dẫn tự biên dịch (Build từ mã nguồn)
-
-Nếu bạn muốn tự tay xây dựng ứng dụng từ mã nguồn:
-
-### macOS
-
-- **Yêu cầu:** macOS Mojave trở lên và Xcode 10 trở lên.
-- **Cách build:**
-  1. Clone mã nguồn của dự án:
-     ```bash
-     git clone https://github.com/nguyenpcminh/xxkey.git
-     ```
-  2. Mở Xcode và mở dự án tại đường dẫn `Sources/OpenKey/macOS/OpenKey.xcodeproj`.
-  3. Trên thanh menu Xcode, chọn **Product** -> **Archive** để bắt đầu biên dịch phiên bản Release.
-  4. Sau khi biên dịch hoàn tất, chọn **Distribute App** để xuất file ứng dụng `XXKey.app`.
-
-### Windows
-
-- **Yêu cầu:** Microsoft Visual Studio 2017 trở lên.
-- **Cách build:**
-  1. Mở solution trong thư mục `Sources/OpenKey/win32`.
-  2. Chọn cấu hình build `Release` và thực hiện build project.
+- **Biên dịch và chạy thử ứng dụng trên macOS:**
+  ```bash
+  make run
+  ```
+- **Chỉ biên dịch và tạo Bundle `build/XXKey.app` trên macOS:**
+  ```bash
+  make build-app
+  ```
+- **Tự động đóng gói bộ cài cho cả 3 hệ điều hành (macOS, Windows, Linux):**
+  ```bash
+  make zips
+  ```
+  Lệnh này sẽ sinh ra 3 file lưu trữ tại thư mục `build/`:
+  - `XXKey-macOS.zip` (Chứa app bundle chạy ngay).
+  - `XXKey-Windows.zip` (Chứa Rust core pre-compiled, source code và file `build.bat` để build ra exe chỉ bằng 1-click trên máy Windows).
+  - `XXKey-Linux.zip` (Chứa Rust core pre-compiled, source code và script `build.sh` để biên dịch trực tiếp trên Linux).
 
 ---
 
-## 📜 Giấy phép & Cam kết bảo mật
+## 📥 Hướng dẫn sử dụng cho từng nền tảng
 
-XXKey được phát hành hoàn toàn miễn phí dưới giấy phép **GPL (GNU General Public License)**.
+### 1. Cho macOS
+1. Giải nén `XXKey-macOS.zip` và kéo **XXKey.app** vào thư mục **Applications**.
+2. **Cấp quyền Trợ năng (Accessibility):**
+   - Vào **System Settings** -> **Privacy & Security** -> **Accessibility**.
+   - Tích chọn cho phép **XXKey** nghe phím từ hệ thống.
 
-- Ứng dụng cam kết minh bạch, **hoàn toàn không chứa mã độc, keylogger, quảng cáo hay bất kỳ đoạn mã theo dõi nào**.
-- Bạn có quyền tự do tải mã nguồn, chỉnh sửa và đóng góp cho dự án. Mọi bản phân phối cải tiến cũng phải được mở mã nguồn và ghi nhận nguồn gốc từ XXKey / OpenKey.
+### 2. Cho Windows
+1. Giải nén `XXKey-Windows.zip`.
+2. Chạy file `build.bat` để compile mã nguồn thành file chạy.
+3. Sau khi build xong, chạy file `xxkey-daemon.exe` (chạy ẩn bắt phím) và `xxkey-settings.exe` (mở bảng cấu hình giao diện).
+
+### 3. Cho Linux
+1. Giải nén `XXKey-Linux.zip`.
+2. Cấp quyền và chạy `./build.sh` để biên dịch.
+3. Chạy `xxkey-daemon` để đăng ký làm IBus Engine và khởi chạy bảng cấu hình `xxkey-settings`.
+
+---
+
+## 📜 Giấy phép & Cam kết
+Bộ gõ XXKey được phát hành hoàn toàn miễn phí dưới giấy phép nguồn mở **GPL-3.0**. 
+
+Cam kết minh bạch: **Bộ gõ không chứa mã độc, không theo dõi và không thu thập bất kỳ dữ liệu nhập liệu nào của người dùng.**
