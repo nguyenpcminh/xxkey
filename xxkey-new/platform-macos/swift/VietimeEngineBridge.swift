@@ -55,6 +55,18 @@ public class VietimeEngineBridge {
         }
     }
 
+    public func setInputType(_ inputType: UInt8) {
+        if let ptr = enginePtr {
+            vietime_set_input_type(ptr, inputType)
+        }
+    }
+
+    public func setModernOrthography(_ modern: Bool) {
+        if let ptr = enginePtr {
+            vietime_set_modern_orthography(ptr, modern ? 1 : 0)
+        }
+    }
+
     public func handleKey(
         event: KeyEvent,
         state: KeyEventState,

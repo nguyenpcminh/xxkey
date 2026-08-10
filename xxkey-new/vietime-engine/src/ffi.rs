@@ -32,6 +32,34 @@ pub unsafe extern "C" fn vietime_reset_engine(engine: *mut Engine) {
     }
 }
 
+/// Set the input type (0 = Telex, 1 = Vni, 2 = SimpleTelex1, 3 = SimpleTelex2).
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn vietime_set_input_type(engine: *mut Engine, input_type: u8) {
+    if !engine.is_null() {
+        if let Some(eng) = unsafe { engine.as_mut() } {
+            let it = match input_type {
+                1 => InputType::Vni,
+                2 => InputType::SimpleTelex1,
+                3 => InputType::SimpleTelex2,
+                _ => InputType::Telex,
+            };
+            eng.cfg.input_type = it;
+            eng.reset();
+        }
+    }
+}
+
+/// Set modern orthography flag (0 = old/classic, 1 = modern).
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn vietime_set_modern_orthography(engine: *mut Engine, modern: u8) {
+    if !engine.is_null() {
+        if let Some(eng) = unsafe { engine.as_mut() } {
+            eng.cfg.use_modern_orthography = modern != 0;
+            eng.reset();
+        }
+    }
+}
+
 /// Process a key event and return a pointer to the resulting HookState.
 /// The returned HookState pointer is owned by the Engine and is valid until the next event.
 #[unsafe(no_mangle)]

@@ -10,6 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // Rust Engine Bridge
     let engine = VietimeEngineBridge()
     var isVietnamese = true
+    var inputType: UInt8 = 0
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Run in background (accessory policy hides dock icon)
@@ -17,6 +18,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         setupStatusMenu()
         setupEventTap()
+        
+        // Listen to settings changes
+        NotificationCenter.default.addObserver(self, selector: #selector(onSettingsInputTypeChanged(_:)), name: Notification.Name("SettingsInputTypeChanged"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onSettingsModernChanged(_:)), name: Notification.Name("SettingsModernChanged"), object: nil)
     }
     
     func setupStatusMenu() {
@@ -36,6 +41,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
+        // Input Method Submenu
+        let inputTypeItem = NSMenuItem(title: "Kiểu gõ", action: nil, keyEquivalent: "")
+        let inputSubmenu = NSMenu()
+        
+        let telexItem = NSMenuItem(title: "Telex", action: #selector(changeInputType(_:)), keyEquivalent: "")
+        telexItem.tag = 0
+        telexItem.state = .on
+        inputSubmenu.addItem(telexItem)
+        
+        let vniItem = NSMenuItem(title: "VNI", action: #selector(changeInputType(_:)), keyEquivalent: "")
+        vniItem.tag = 1
+        inputSubmenu.addItem(vniItem)
+        
+        let st1Item = NSMenuItem(title: "Simple Telex 1", action: #selector(changeInputType(_:)), keyEquivalent: "")
+        st1Item.tag = 2
+        inputSubmenu.addItem(st1Item)
+        
+        let st2Item = NSMenuItem(title: "Simple Telex 2", action: #selector(changeInputType(_:)), keyEquivalent: "")
+        st2Item.tag = 3
+        inputSubmenu.addItem(st2Item)
+        
+        inputTypeItem.submenu = inputSubmenu
+        menu.addItem(inputTypeItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
         let resetItem = NSMenuItem(title: "Reset bộ nhớ bộ gõ", action: #selector(resetEngine), keyEquivalent: "")
         menu.addItem(resetItem)
         
@@ -45,6 +76,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(quitItem)
         
         statusItem?.menu = menu
+    }
+    
+    @objc func changeInputType(_ sender: NSMenuItem) {
+        AppSettingsState.shared.inputType = sender.tag
+    }
+    
+    @objc func onSettingsInputTypeChanged(_ notification: Notification) {
+        if let val = notification.object as? Int {
+            let tag = UInt8(val)
+            self.inputType = tag
+            self.engine.setInputType(tag)
+            
+            // Update checkmarks in status menu
+            if let submenu = statusItem?.menu?.items.first(where: { $0.title == "Kiểu gõ" })?.submenu {
+                for item in submenu.items {
+                    item.state = (item.tag == val) ? .on : .off
+                }
+            }
+        }
+    }
+
+    @objc func onSettingsModernChanged(_ notification: Notification) {
+        if let val = notification.object as? Bool {
+            self.engine.setModernOrthography(val)
+        }
     }
     
     @objc func toggleLanguage() {
@@ -160,9 +216,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         }
                     }
                     
-                    // Send characters
+                    // Send characters from engine
+                    var newStr = ""
                     if !result.characters.isEmpty {
-                        let newStr = String(result.characters)
+                        newStr = String(result.characters)
+                    }
+                    
+                    // If it is a restore event, append the literal key that was pressed (only if it is a mark key)
+                    if result.code == .restore {
+                        if self.isMarkKey(inputType: self.inputType, code: UInt16(keyCode)) {
+                            let chVal = vietime_key_code_to_char(UInt32(keyCode))
+                            if chVal != 0, let scalar = UnicodeScalar(chVal) {
+                                var literalChar = String(scalar)
+                                let isShift = flags.contains(.maskShift)
+                                let isAlphaShift = flags.contains(.maskAlphaShift)
+                                if isShift || isAlphaShift {
+                                    literalChar = literalChar.uppercased()
+                                }
+                                newStr += literalChar
+                            }
+                        }
+                    }
+                    
+                    if !newStr.isEmpty {
                         sendUnicodeString(newStr, proxy: proxy)
                     }
                     
@@ -176,6 +252,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         return Unmanaged.passUnretained(event)
+    }
+    
+    private func isMarkKey(inputType: UInt8, code: UInt16) -> Bool {
+        if inputType == 0 || inputType == 2 || inputType == 3 { // Telex, SimpleTelex1, SimpleTelex2
+            return code == 1 || code == 3 || code == 15 || code == 38 || code == 7
+        } else if inputType == 1 { // VNI
+            return code == 18 || code == 19 || code == 20 || code == 23 || code == 21
+        }
+        return false
     }
     
     private func sendBackspace(proxy: CGEventTapProxy) {
@@ -225,26 +310,69 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+class AppSettingsState: ObservableObject {
+    static let shared = AppSettingsState()
+    
+    @Published var inputType: Int = 0 {
+        didSet {
+            NotificationCenter.default.post(name: Notification.Name("SettingsInputTypeChanged"), object: inputType)
+        }
+    }
+    
+    @Published var modernOrthography: Bool = true {
+        didSet {
+            NotificationCenter.default.post(name: Notification.Name("SettingsModernChanged"), object: modernOrthography)
+        }
+    }
+}
+
+struct SettingsView: View {
+    @ObservedObject var state = AppSettingsState.shared
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Cấu hình Bộ Gõ Vietime")
+                .font(.title2)
+                .fontWeight(.bold)
+            
+            Picker("Kiểu gõ:", selection: $state.inputType) {
+                Text("Telex").tag(0)
+                Text("VNI").tag(1)
+                Text("Simple Telex 1").tag(2)
+                Text("Simple Telex 2").tag(3)
+            }
+            .pickerStyle(.radioGroup)
+            
+            Toggle("Sử dụng chính tả hiện đại (Modern Orthography)", isOn: $state.modernOrthography)
+            
+            Divider()
+            
+            HStack {
+                Button("Kiểm tra quyền Trợ năng (Accessibility)") {
+                    let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
+                    AXIsProcessTrustedWithOptions(options as CFDictionary)
+                }
+                .buttonStyle(.borderedProminent)
+                
+                Spacer()
+                
+                Text("Rust Core v1.0")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .frame(width: 400, height: 260)
+        .padding()
+    }
+}
+
 @main
 struct VietimeApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
         Settings {
-            VStack(spacing: 20) {
-                Text("Bộ Gõ Tiếng Việt Vietime")
-                    .font(.title)
-                    .fontWeight(.bold)
-                Text("Đang chạy ẩn trong thanh Menu Bar.")
-                    .foregroundColor(.secondary)
-                Button("Kiểm tra quyền Trợ năng (Accessibility)") {
-                    let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
-                    AXIsProcessTrustedWithOptions(options as CFDictionary)
-                }
-                .buttonStyle(.borderedProminent)
-            }
-            .frame(width: 350, height: 180)
-            .padding()
+            SettingsView()
         }
     }
 }

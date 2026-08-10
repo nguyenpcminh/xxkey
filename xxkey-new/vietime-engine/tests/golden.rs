@@ -88,6 +88,14 @@ fn type_text(eng: &mut Engine, text: &str) -> Vec<u16> {
                 screen.push(ch);
             }
         }
+        if state.code == HookCode::Restore {
+            if is_mark_key(eng.cfg.input_type, key) {
+                let ch = key_code_to_character(key as u32);
+                if ch != 0 {
+                    screen.push(ch);
+                }
+            }
+        }
         if state.code == HookCode::RestoreAndStartNewSession {
             eng.start_new_session();
         }
@@ -195,4 +203,12 @@ fn golden_all_input_types_match_oracle() {
         panic!("{} golden vectors mismatched", failures.len());
     }
     eprintln!("golden all types: {passed} vectors OK");
+}
+
+#[test]
+fn test_texx() {
+    let mut eng = make_engine(InputType::Telex, true);
+    let screen = type_text(&mut eng, "texx");
+    let got = screen.iter().map(|&c| char::from_u32(c as u32).unwrap()).collect::<String>();
+    assert_eq!(got, "tex");
 }

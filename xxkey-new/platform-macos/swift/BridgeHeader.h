@@ -11,6 +11,8 @@ typedef struct HookState HookState;
 Engine* vietime_new_engine(void);
 void vietime_free_engine(Engine* engine);
 void vietime_reset_engine(Engine* engine);
+void vietime_set_input_type(Engine* engine, uint8_t input_type);
+void vietime_set_modern_orthography(Engine* engine, uint8_t modern);
 
 const HookState* vietime_handle_key(
     Engine* engine,
