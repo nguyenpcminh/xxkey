@@ -1,0 +1,165 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on any version tags like v1.0.0, v0.1.0-alpha, etc.
+
+permissions:
+  contents: write # Needed to create a release and upload assets
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_name: XXKey-Windows
+            platform: windows
+          - os: ubuntu-latest
+            artifact_name: XXKey-Linux
+            platform: linux
+          - os: macos-latest
+            artifact_name: XXKey-macOS
+            platform: macos
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # -------------------------------------------------------------
+      # 1. Build Windows Binaries
+      # -------------------------------------------------------------
+      - name: Build Windows
+        if: matrix.platform == 'windows'
+        run: |
+          cargo build --release -p platform-win -p ui-settings
+          mkdir build/windows-stage
+          cp target/release/xxkey-daemon.exe build/windows-stage/
+          cp target/release/xxkey-settings.exe build/windows-stage/
+          # Create a README for Windows users
+          @"
+          # XXKey Windows Port
+          - Run xxkey-daemon.exe to start the background typing engine.
+          - Run xxkey-settings.exe to configure settings.
+          "@ | Out-File -FilePath build/windows-stage/README.md -Encoding utf8
+          
+          cd build
+          Compress-Archive -Path windows-stage/* -DestinationPath ../XXKey-Windows.zip
+        shell: pwsh
+
+      # -------------------------------------------------------------
+      # 2. Build Linux Binaries
+      # -------------------------------------------------------------
+      - name: Install Linux GUI / Font dependencies
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxkbcommon-dev libfontconfig1-dev libxcb-shape0-dev libxcb-xfixes0-dev
+          
+      - name: Build Linux
+        if: matrix.platform == 'linux'
+        run: |
+          cargo build --release -p platform-linux -p ui-settings
+          mkdir -p build/linux-stage
+          cp target/release/xxkey-daemon build/linux-stage/
+          cp target/release/xxkey-settings build/linux-stage/
+          
+          cat << 'EOF' > build/linux-stage/README.md
+          # XXKey Linux Port
+          - Run `./xxkey-daemon` to start the typing daemon.
+          - Run `./xxkey-settings` to open the UI.
+          EOF
+          
+          cd build
+          zip -r ../XXKey-Linux.zip linux-stage
+        shell: bash
+
+      # -------------------------------------------------------------
+      # 3. Build macOS App Bundle
+      # -------------------------------------------------------------
+      - name: Build macOS App
+        if: matrix.platform == 'macos'
+        run: |
+          # Build Rust core
+          cargo build -p vietime-engine --release
+          
+          # Create App Bundle directory structure
+          mkdir -p build/XXKey.app/Contents/MacOS
+          
+          # Compile Swift frontend and link with Rust engine
+          swiftc -import-objc-header platform-macos/swift/BridgeHeader.h \
+            platform-macos/swift/VietimeEngineBridge.swift \
+            platform-macos/swift/App.swift \
+            -o build/XXKey.app/Contents/MacOS/XXKey \
+            -L target/release -lvietime_engine
+            
+          # Create Info.plist
+          cat << 'EOF' > build/XXKey.app/Contents/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>XXKey</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.xxkey.app</string>
+              <key>CFBundleName</key>
+              <string>XXKey</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>CFBundleShortVersionString</key>
+              <string>1.0</string>
+              <key>LSMinimumSystemVersion</key>
+              <string>10.15</string>
+          </dict>
+          </plist>
+          EOF
+          
+          cd build
+          zip -r ../XXKey-macOS.zip XXKey.app
+        shell: bash
+
+      # -------------------------------------------------------------
+      # 4. Upload temporary runner artifact
+      # -------------------------------------------------------------
+      - name: Upload Runner Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: XXKey-*.zip
+          retention-days: 1
+
+  # -----------------------------------------------------------------
+  # Job to consolidate artifacts and create a GitHub Release
+  # -----------------------------------------------------------------
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Consolidate ZIP files
+        run: |
+          mkdir release-assets
+          find artifacts -name "*.zip" -exec cp {} release-assets/ \;
+          echo "Assets to release:"
+          ls -l release-assets/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
