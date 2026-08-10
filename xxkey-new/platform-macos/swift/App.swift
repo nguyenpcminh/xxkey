@@ -46,7 +46,7 @@ struct ContentView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                     )
-                    .onChange(of: textInput) { newValue in
+                    .onChange(of: textInput) { oldValue, newValue in
                         processInput(newValue)
                     }
             }

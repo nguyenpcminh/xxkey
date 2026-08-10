@@ -8,7 +8,6 @@
 
 #![cfg_attr(feature = "no_std", no_std)]
 #![deny(unsafe_code)]
-#![warn(missing_docs)]
 
 pub mod convert;
 pub mod datatype;

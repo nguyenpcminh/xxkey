@@ -57,6 +57,9 @@ build-app: build-rust
 
 # 3. Clean all build artifacts
 clean:
+	export PATH="/Users/itaccountvn.ab-inbev.com/Library/Caches/puccinialin/cargo/bin:$$PATH"; \
+	export CARGO_HOME="/Users/itaccountvn.ab-inbev.com/Library/Caches/puccinialin/cargo"; \
+	export RUSTUP_HOME="/Users/itaccountvn.ab-inbev.com/Library/Caches/puccinialin/rustup"; \
 	cargo clean
 	rm -rf $(BUILD_DIR)
 
