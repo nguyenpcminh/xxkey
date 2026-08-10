@@ -4,7 +4,8 @@ SHELL := /bin/bash
 
 # Target binary paths
 APP_NAME := VietimeApp
-APP_BUNDLE := $(APP_NAME).app
+BUILD_DIR := build
+APP_BUNDLE := $(BUILD_DIR)/$(APP_NAME).app
 CARGO_TARGET_DIR := target
 
 # Environment variables for Puccinialin Cargo/Rustup installation
@@ -57,7 +58,7 @@ build-app: build-rust
 # 3. Clean all build artifacts
 clean:
 	cargo clean
-	rm -rf $(APP_BUNDLE)
+	rm -rf $(BUILD_DIR)
 
 # 4. Compile and launch the app immediately
 run: build-app
