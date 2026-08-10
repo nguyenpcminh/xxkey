@@ -6,8 +6,8 @@
 //! `HookState` describing how the front-end should edit the text buffer
 //! (backspace count + new characters).
 
-#![cfg_attr(not(test), no_std)]
-#![forbid(unsafe_code)]
+#![cfg_attr(feature = "no_std", no_std)]
+#![deny(unsafe_code)]
 #![warn(missing_docs)]
 
 pub mod convert;
@@ -17,6 +17,9 @@ pub mod keycode;
 pub mod macro_feature;
 pub mod smart_switch;
 pub mod vietnamese;
+
+#[allow(unsafe_code)]
+pub mod ffi;
 
 pub use convert::*;
 pub use datatype::*;

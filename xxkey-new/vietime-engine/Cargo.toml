@@ -9,5 +9,9 @@ description = "Vietnamese input engine — pure Rust, no_std, ported from OpenKe
 # Tests run on std so we can use Vec/println for verification.
 [lib]
 name = "vietime_engine"
+crate-type = ["rlib", "staticlib"]
 
 [dependencies]
+
+[features]
+no_std = []
