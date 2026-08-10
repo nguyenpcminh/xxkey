@@ -3,15 +3,16 @@ import { Button, CheckBox, ComboBox, GroupBox, HorizontalBox, VerticalBox } from
 export component MainWindow inherits Window {
     title: "Cấu hình Bộ Gõ XXKey";
     width: 420px;
-    height: 340px;
+    height: 370px;
     
     // Properties to exchange data with Rust
     in-out property <int> input-type: 0;
     in-out property <bool> modern-orthography: true;
     in-out property <bool> check-spelling: true;
     in-out property <bool> use-macro: false;
+    in-out property <bool> autostart: false;
     
-    callback save-settings(int, bool, bool, bool);
+    callback save-settings(int, bool, bool, bool, bool);
     callback close-window();
 
     VerticalBox {
@@ -59,6 +60,11 @@ export component MainWindow inherits Window {
                     checked: root.use-macro;
                     toggled => { root.use-macro = !root.use-macro; }
                 }
+                CheckBox {
+                    text: "Khởi động cùng hệ thống (Start on boot)";
+                    checked: root.autostart;
+                    toggled => { root.autostart = !root.autostart; }
+                }
             }
         }
 
@@ -69,7 +75,7 @@ export component MainWindow inherits Window {
                 text: "Lưu cấu hình";
                 primary: true;
                 clicked => {
-                    root.save-settings(root.input-type, root.modern-orthography, root.check-spelling, root.use-macro);
+                    root.save-settings(root.input-type, root.modern-orthography, root.check-spelling, root.use-macro, root.autostart);
                 }
             }
             Button {

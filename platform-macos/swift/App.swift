@@ -1,6 +1,7 @@
 import Cocoa
 import InputMethodKit
 import SwiftUI
+import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
@@ -430,8 +431,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 class AppSettingsState: ObservableObject {
     static let shared = AppSettingsState()
 
-    @Published var inputType: Int = 0 {
+    @Published var inputType: Int {
         didSet {
+            UserDefaults.standard.set(inputType, forKey: "inputType")
             NotificationCenter.default.post(
                 name: Notification.Name("SettingsInputTypeChanged"),
                 object: inputType
@@ -439,12 +441,65 @@ class AppSettingsState: ObservableObject {
         }
     }
 
-    @Published var modernOrthography: Bool = true {
+    @Published var modernOrthography: Bool {
         didSet {
+            UserDefaults.standard.set(modernOrthography, forKey: "modernOrthography")
             NotificationCenter.default.post(
                 name: Notification.Name("SettingsModernChanged"),
                 object: modernOrthography
             )
+        }
+    }
+
+    @Published var autostart: Bool {
+        didSet {
+            UserDefaults.standard.set(autostart, forKey: "autostart")
+            updateAutostart(enabled: autostart)
+        }
+    }
+
+    init() {
+        UserDefaults.standard.register(defaults: [
+            "inputType": 0,
+            "modernOrthography": true,
+            "autostart": false
+        ])
+        
+        self.inputType = UserDefaults.standard.integer(forKey: "inputType")
+        self.modernOrthography = UserDefaults.standard.bool(forKey: "modernOrthography")
+        
+        if #available(macOS 13.0, *) {
+            let status = SMAppService.mainApp.status
+            self.autostart = (status == .enabled)
+        } else {
+            self.autostart = UserDefaults.standard.bool(forKey: "autostart")
+        }
+    }
+
+    private func updateAutostart(enabled: Bool) {
+        if #available(macOS 13.0, *) {
+            let service = SMAppService.mainApp
+            if enabled {
+                if service.status != .enabled {
+                    do {
+                        try service.register()
+                        print("Successfully registered main app service for login")
+                    } catch {
+                        print("Failed to register main app service: \(error)")
+                    }
+                }
+            } else {
+                if service.status == .enabled {
+                    do {
+                        try service.unregister()
+                        print("Successfully unregistered main app service for login")
+                    } catch {
+                        print("Failed to unregister main app service: \(error)")
+                    }
+                }
+            }
+        } else {
+            print("Autostart not supported via SMAppService on this macOS version")
         }
     }
 }
@@ -471,6 +526,11 @@ struct SettingsView: View {
                 isOn: $state.modernOrthography
             )
 
+            Toggle(
+                "Khởi động cùng hệ thống (Start on login)",
+                isOn: $state.autostart
+            )
+
             Divider()
 
             HStack {
@@ -489,7 +549,7 @@ struct SettingsView: View {
                     .foregroundColor(.secondary)
             }
         }
-        .frame(width: 400, height: 260)
+        .frame(width: 400, height: 290)
         .padding()
     }
 }
