@@ -212,3 +212,42 @@ fn test_texx() {
     let got = screen.iter().map(|&c| char::from_u32(c as u32).unwrap()).collect::<String>();
     assert_eq!(got, "tex");
 }
+
+#[test]
+fn test_trace_words() {
+    let words: &[(&str, &[char])] = &[
+        ("saf",       &['s','a','f']),
+        ("hoc",       &['h','o','c']),
+        ("ddieesm",   &['d','d','i','e','e','s','m']),  // full điểm with dd
+        ("chuaas",    &['c','h','u','a','a','s']),
+        ("hoas",      &['h','o','a','s']),
+        ("tuwongf",   &['t','u','w','o','n','g','f']),  // tướng
+        ("dieemj",    &['d','i','e','e','m','j']),      // điệm
+        ("hocj",      &['h','o','c','j']),              // học
+    ];
+
+    let mut eng = make_engine(InputType::Telex, true);
+    for (label, chars) in words {
+        eng.reset();
+        println!("--- {} ---", label);
+        for &c in *chars {
+            let key = char_to_key(c);
+            let state = eng.handle_key(KeyEvent::Keyboard, KeyEventState::KeyDown, key, 0, false);
+            let mut char_strs = Vec::new();
+            for i in (0..state.new_char_count as usize).rev() {
+                let val = state.char_data[i];
+                let ch = if val & CHAR_CODE_MASK != 0 {
+                    (val & 0xFFFF) as u16
+                } else {
+                    key_code_to_character(val)
+                };
+                char_strs.push(char::from_u32(ch as u32).unwrap_or('?'));
+            }
+            let chars_out: String = char_strs.iter().collect();
+            println!("  '{}' -> code={:?} bpc={} chars=\"{}\" ext={:?}",
+                     c, state.code, state.backspace_count, chars_out, state.ext_code);
+        }
+    }
+    panic!("Forcing output — check stdout above");
+}
+

@@ -55,6 +55,12 @@ public class VietimeEngineBridge {
         }
     }
 
+    public func startNewSession() {
+        if let ptr = enginePtr {
+            vietime_start_new_session(ptr)
+        }
+    }
+
     public func setInputType(_ inputType: UInt8) {
         if let ptr = enginePtr {
             vietime_set_input_type(ptr, inputType)

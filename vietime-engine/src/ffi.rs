@@ -32,6 +32,16 @@ pub unsafe extern "C" fn vietime_reset_engine(engine: *mut Engine) {
     }
 }
 
+/// Start a new typing session (word break / restore-and-start).
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn vietime_start_new_session(engine: *mut Engine) {
+    if !engine.is_null() {
+        if let Some(eng) = unsafe { engine.as_mut() } {
+            eng.start_new_session();
+        }
+    }
+}
+
 /// Set the input type (0 = Telex, 1 = Vni, 2 = SimpleTelex1, 3 = SimpleTelex2).
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn vietime_set_input_type(engine: *mut Engine, input_type: u8) {
