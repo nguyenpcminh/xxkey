@@ -89,11 +89,9 @@ fn type_text(eng: &mut Engine, text: &str) -> Vec<u16> {
             }
         }
         if state.code == HookCode::Restore {
-            if is_mark_key(eng.cfg.input_type, key) {
-                let ch = key_code_to_character(key as u32);
-                if ch != 0 {
-                    screen.push(ch);
-                }
+            let ch = key_code_to_character(key as u32);
+            if ch != 0 {
+                screen.push(ch);
             }
         }
         if state.code == HookCode::RestoreAndStartNewSession {
@@ -211,6 +209,22 @@ fn test_texx() {
     let screen = type_text(&mut eng, "texx");
     let got = screen.iter().map(|&c| char::from_u32(c as u32).unwrap()).collect::<String>();
     assert_eq!(got, "tex");
+}
+
+#[test]
+fn test_ddd_restores_dd() {
+    let mut eng = make_engine(InputType::Telex, true);
+    let screen = type_text(&mut eng, "ddd");
+    let got = screen.iter().map(|&c| char::from_u32(c as u32).unwrap()).collect::<String>();
+    assert_eq!(got, "dd");
+}
+
+#[test]
+fn test_aaa_restores_aa() {
+    let mut eng = make_engine(InputType::Telex, true);
+    let screen = type_text(&mut eng, "aaa");
+    let got = screen.iter().map(|&c| char::from_u32(c as u32).unwrap()).collect::<String>();
+    assert_eq!(got, "aa");
 }
 
 #[test]

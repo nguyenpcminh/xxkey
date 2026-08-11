@@ -313,17 +313,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             if result.code == .restore {
-                if self.isMarkKey(inputType: self.inputType, code: UInt16(keyCode)) {
-                    let chVal = vietime_key_code_to_char(UInt32(keyCode))
-                    if chVal != 0, let scalar = UnicodeScalar(chVal) {
-                        var literalChar = String(scalar)
+                let chVal = vietime_key_code_to_char(UInt32(keyCode))
+                if chVal != 0, let scalar = UnicodeScalar(chVal) {
+                    var literalChar = String(scalar)
 
-                        if flags.contains(.maskShift) || flags.contains(.maskAlphaShift) {
-                            literalChar = literalChar.uppercased()
-                        }
-
-                        newStr += literalChar
+                    if flags.contains(.maskShift) || flags.contains(.maskAlphaShift) {
+                        literalChar = literalChar.uppercased()
                     }
+
+                    newStr += literalChar
                 }
             }
 
@@ -347,25 +345,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func isMarkKey(inputType: UInt8, code: UInt16) -> Bool {
-        if inputType == 0 || inputType == 2 || inputType == 3 {
-            // Telex, SimpleTelex1, SimpleTelex2
-            return code == 1  // s
-                || code == 3  // f
-                || code == 15  // r
-                || code == 38  // x
-                || code == 7  // j
-        } else if inputType == 1 {
-            // VNI
-            return code == 18  // 1
-                || code == 19  // 2
-                || code == 20  // 3
-                || code == 23  // 4
-                || code == 21  // 5
-        }
-
-        return false
-    }
 
     private func sendBackspace(proxy: CGEventTapProxy) {
         let source = CGEventSource(stateID: .privateState)
