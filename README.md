@@ -1,24 +1,26 @@
 # XXKey
 
-### Bộ gõ tiếng Việt mã nguồn mở tối ưu cho macOS, Windows và Linux (Core Rust)
+### Bộ gõ tiếng Việt mã nguồn mở tối ưu cho macOS (Rust Core)
 
 **XXKey** là bộ gõ tiếng Việt mã nguồn mở thế hệ mới, ban đầu được phát triển dưới dạng một bản fork từ dự án **OpenKey** (của tác giả _tuyenvm_). 
 
-Để tối ưu hóa hiệu năng, tăng cường an toàn bộ nhớ và mang lại khả năng tương thích đa nền tảng hoàn hảo (macOS, Windows, Linux), dự án đã tiến hành thiết kế và chuyển đổi toàn bộ phần lõi xử lý phím sang ngôn ngữ **Rust** (lấy tên là **`vietime-engine`**). Lõi xử lý này kế thừa chuẩn xác thuật toán xử lý phím gốc của OpenKey (C++), vượt qua bộ kiểm thử tự động (differential testing) với hơn 1.800 test vector để đảm bảo hành vi gõ dấu tiếng Việt chính xác 100%, không bị lỗi gạch chân hay mất phím.
+Hiện tại, **XXKey** hỗ trợ hoàn chỉnh hệ điều hành **macOS** (chạy ẩn qua Event Tap). Phiên bản cho **Windows** và **Linux** đang nằm trong lộ trình phát triển tiếp theo (hiện đã có giao diện cấu hình bằng Rust/Slint và khung bắt phím thô).
+
+Để tối ưu hóa hiệu năng, tăng cường an toàn bộ nhớ và mang lại khả năng tương thích đa nền tảng lâu dài, dự án đã tiến hành thiết kế và chuyển đổi toàn bộ phần lõi xử lý phím sang ngôn ngữ **Rust** (lấy tên là **`vietime-engine`**). Lõi xử lý này kế thừa chuẩn xác thuật toán xử lý phím gốc của OpenKey (C++), vượt qua bộ kiểm thử tự động (differential testing) với hơn 1.800 test vector để đảm bảo hành vi gõ dấu tiếng Việt chính xác 100%, không bị lỗi gạch chân hay mất phím.
 
 ---
 
-## ⚡ Các tính năng nổi bật
+## ⚡ Các tính năng nổi bật (Trên macOS)
 
 ### ⌨️ Hỗ trợ kiểu gõ và bảng mã đa dạng
 - **Kiểu gõ:** Telex, VNI, Simple Telex 1, Simple Telex 2.
-- **Bảng mã:** Lõi Rust hỗ trợ các bảng mã thông dụng như Unicode dựng sẵn, Unicode tổ hợp, TCVN3 (ABC), VNI Windows, Vietnamese Locale CP 1258. *Lưu ý: Hiện giao diện UI mặc định sử dụng Unicode dựng sẵn, tính năng lựa chọn bảng mã trên UI đang được phát triển.*
+- **Bảng mã:** Lõi Rust hỗ trợ các bảng mã thông dụng như Unicode dựng sẵn, Unicode tổ hợp, TCVN3 (ABC), VNI Windows, Vietnamese Locale CP 1258. *Lưu ý: Hiện giao diện UI mặc định sử dụng Unicode dựng sẵn.*
 
 ### 🧠 Xử lý thông minh & Tiện ích
-- **Khởi động cùng hệ thống (Auto-launch):** Hỗ trợ tùy chọn tự động khởi động cùng hệ điều hành khi đăng nhập (sử dụng `SMAppService` trên macOS, ghi Registry trên Windows và tệp `.desktop` trên Linux).
+- **Khởi động cùng hệ thống (Auto-launch):** Hỗ trợ tùy chọn tự động khởi động cùng hệ điều hành khi đăng nhập (sử dụng `SMAppService` trên macOS).
 - **Khôi phục phím gõ sai (Restore spelling):** Tự động hoàn tác về ký tự gốc khi phát hiện từ sai quy tắc chính tả tiếng Việt.
 - **Chính tả hiện đại (Modern Orthography):** Hỗ trợ đặt dấu chuẩn theo phong cách mới hoặc phong cách cổ truyền.
-- **Giao diện cấu hình gọn nhẹ:** Sử dụng giao diện Slint UI trên Windows/Linux chỉ tiêu tốn **~5MB RAM** khi chạy, vượt trội so với các giải pháp dựa trên Webview (như Electron/Tauri).
+- **Giao diện cấu hình gọn nhẹ (Đang phát triển trên Win/Linux):** Sử dụng giao diện Slint UI trên Windows/Linux chỉ tiêu tốn **~5MB RAM** khi chạy, vượt trội so với các giải pháp dựa trên Webview (như Electron/Tauri).
 - **Phụ âm ghép & Gõ nhanh:** Hỗ trợ Telex nhanh (`cc` -> `ch`, `gg` -> `gi`, `kk` -> `kh`...) và tự động viết hoa chữ cái đầu câu.
 - **Gõ tắt (Macro):** Khởi tạo và sử dụng bảng từ gõ tắt (lõi xử lý gõ tắt đã sẵn sàng).
 
@@ -74,20 +76,20 @@ Tại thư mục gốc của dự án, bạn có thể sử dụng các lệnh M
 
 ## 📥 Trạng thái sử dụng cho từng nền tảng
 
-### 1. Cho macOS (Đã hoàn thiện)
+### 1. Cho macOS (Đã hoàn thiện & Sẵn sàng sử dụng)
 1. Giải nén `XXKey-macOS.zip` và kéo **XXKey.app** vào thư mục **Applications**.
 2. **Cấp quyền Trợ năng (Accessibility):**
    - Vào **System Settings** -> **Privacy & Security** -> **Accessibility**.
    - Tích chọn cho phép **XXKey** nghe phím từ hệ thống.
 3. Trong giao diện cài đặt, bạn có thể tích chọn **Khởi động cùng hệ thống** để tự động mở bộ gõ khi bật máy.
 
-### 2. Cho Windows (Đang phát triển Daemon)
-1. Hiện tại giao diện cấu hình [`ui-settings`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-settings) đã hoàn thiện và hỗ trợ cấu hình các tính năng bao gồm cả tự động khởi động cùng hệ thống (ghi Registry).
-2. Daemon bắt phím [`platform-win`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-win) đang trong quá trình tích hợp sâu với lõi Rust và khay hệ thống.
+### 2. Cho Windows (Đang phát triển, chưa sẵn sàng sử dụng)
+1. Giao diện cấu hình [`ui-settings`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-settings) đã hoàn thiện sử dụng Slint UI.
+2. Daemon bắt phím [`platform-win`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-win) đang trong lộ trình phát triển tích hợp hook Win32 tầng thấp với lõi Rust.
 
-### 3. Cho Linux (Đang phát triển Daemon)
-1. Giao diện cấu hình [`ui-settings`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-settings) đã hoàn thiện, hỗ trợ lưu cấu hình và tự tạo tệp `.desktop` để khởi động cùng hệ thống.
-2. Khung dịch vụ tích hợp IBus/Fcitx5 [`platform-linux`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-linux) đang được xây dựng để xử lý sự kiện phím trên môi trường Linux.
+### 3. Cho Linux (Đang phát triển, chưa sẵn sàng sử dụng)
+1. Giao diện cấu hình [`ui-settings`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-settings) đã hoàn thiện.
+2. Khung dịch vụ tích hợp IBus/Fcitx5 [`platform-linux`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-linux) đang được nghiên cứu xây dựng.
 
 ---
 
