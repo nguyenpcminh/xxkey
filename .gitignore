@@ -1,5 +1,7 @@
 /target
+/build
+*.zip
+*.app
+.DS_Store
 **/*.rs.bk
 Cargo.lock.orig
-.DS_Store
-*.app

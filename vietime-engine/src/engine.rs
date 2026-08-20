@@ -108,6 +108,7 @@ impl Default for EngineConfig {
 
 /// The engine instance. Holds all mutable state (previously static globals).
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 pub struct Engine {
     pub cfg: EngineConfig,
 
@@ -432,7 +433,7 @@ impl Engine {
 
             // check next vowel
             let mut k = j;
-            let mut vowel_start_index = k;
+            let vowel_start_index = k;
 
             // fix "que't"
             if self.chr(vowel_start_index) == KEY_U
@@ -442,23 +443,19 @@ impl Engine {
             {
                 k += 1;
                 j = k;
-                vowel_start_index = k;
             } else if self.index >= 2
                 && self.chr(0) == KEY_G
                 && self.chr(1) == KEY_I
                 && is_consonant(self.chr(2))
             {
                 // fix gìn
-                vowel_start_index = 1;
                 k = 1;
                 j = 1;
             }
 
-            let mut vowel_end_index = 0usize;
             for _l in 0..3 {
                 if k < self.spelling_end_index && !is_consonant(self.chr(k)) {
                     k += 1;
-                    vowel_end_index = k;
                 }
             }
 
@@ -949,7 +946,7 @@ impl Engine {
 
 impl Engine {
     /// Port of `insertD` — handles the "đ" key (KEY_D).
-    fn insert_d(&mut self, is_caps: bool) {
+    fn insert_d(&mut self, _is_caps: bool) {
         self.state.code = HookCode::WillProcess;
         self.state.backspace_count = 0;
         let mut ii = self.index;
@@ -987,7 +984,7 @@ impl Engine {
     }
 
     /// Port of `insertAOE` — the "double" vowel key (a,o,e hats).
-    fn insert_aoe(&mut self, data: u16, is_caps: bool) {
+    fn insert_aoe(&mut self, data: u16, _is_caps: bool) {
         self.find_and_calculate_vowel(false);
 
         // remove W tone
@@ -1040,7 +1037,7 @@ impl Engine {
     }
 
     /// Port of `insertW` — the "w" tone key.
-    fn insert_w(&mut self, data: u16, is_caps: bool) {
+    fn insert_w(&mut self, _data: u16, _is_caps: bool) {
         self.is_restored_w = false;
 
         self.find_and_calculate_vowel(false);

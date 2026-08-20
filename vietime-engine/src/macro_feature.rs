@@ -40,7 +40,7 @@ pub fn convert_str_to_key_codes(s: &str, code_table_idx: usize) -> Vec<u32> {
 
         // 2. Check tone/mark character in code_table 0
         let mut found = false;
-        if let Some(table0) = code_table(0, KEY_A as u32) {
+        if code_table(0, KEY_A as u32).is_some() {
             // iterate code table 0 entries
             let keys_to_check = [
                 KEY_A as u32, KEY_O as u32, KEY_U as u32, KEY_E as u32, KEY_D as u32,

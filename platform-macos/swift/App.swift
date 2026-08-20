@@ -12,6 +12,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let engine = VietimeEngineBridge()
     var isVietnamese = true
     var inputType: UInt8 = 0
+    var settingsWindow: NSWindow?
 
     private func isGhostAutocompleteApp(_ bundleId: String) -> Bool {
         let b = bundleId.lowercased()
@@ -104,7 +105,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         inputTypeItem.submenu = inputSubmenu
         menu.addItem(inputTypeItem)
 
+        let modernItem = NSMenuItem(
+            title: "Chính tả hiện đại (oà, uỳ)",
+            action: #selector(toggleModernOrthography),
+            keyEquivalent: ""
+        )
+        modernItem.state = AppSettingsState.shared.modernOrthography ? .on : .off
+        menu.addItem(modernItem)
+
         menu.addItem(NSMenuItem.separator())
+
+        let settingsItem = NSMenuItem(
+            title: "Bảng điều khiển...",
+            action: #selector(openSettings),
+            keyEquivalent: ","
+        )
+        settingsItem.keyEquivalentModifierMask = [.command]
+        menu.addItem(settingsItem)
 
         let resetItem = NSMenuItem(
             title: "Reset bộ nhớ bộ gõ",
@@ -130,6 +147,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         AppSettingsState.shared.inputType = sender.tag
     }
 
+    @objc func toggleModernOrthography() {
+        AppSettingsState.shared.modernOrthography.toggle()
+    }
+
+    @objc func openSettings() {
+        if settingsWindow == nil {
+            let window = NSWindow(
+                contentRect: NSRect(x: 0, y: 0, width: 440, height: 320),
+                styleMask: [.titled, .closable, .miniaturizable],
+                backing: .buffered,
+                defer: false
+            )
+            window.center()
+            window.title = "Cấu hình XXKey"
+            window.isReleasedWhenClosed = false
+            window.contentView = NSHostingView(rootView: SettingsView())
+            settingsWindow = window
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        settingsWindow?.makeKeyAndOrderFront(nil)
+        settingsWindow?.orderFrontRegardless()
+    }
+
     @objc func onSettingsInputTypeChanged(_ notification: Notification) {
         guard let val = notification.object as? Int else { return }
 
@@ -150,6 +190,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         self.engine.setModernOrthography(val)
         resetCompositionState(resetEngineCore: true)
+
+        if let menu = statusItem?.menu,
+           let item = menu.items.first(where: { $0.action == #selector(toggleModernOrthography) }) {
+            item.state = val ? .on : .off
+        }
     }
 
     @objc func toggleLanguage() {
@@ -215,6 +260,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func handleEvent(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<
         CGEvent
     >? {
+        // Auto-re-enable EventTap if disabled by macOS due to system load / timeout
+        if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            if let tap = eventTap {
+                CGEvent.tapEnable(tap: tap, enable: true)
+            }
+            return Unmanaged.passUnretained(event)
+        }
+
         if type == .leftMouseDown || type == .rightMouseDown {
             engine.reset()
             return Unmanaged.passUnretained(event)

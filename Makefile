@@ -51,8 +51,12 @@ build-app: build-rust
 	@echo '    <string>1.0</string>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <key>LSMinimumSystemVersion</key>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <string>10.15</string>' >> $(APP_BUNDLE)/Contents/Info.plist
+	@echo '    <key>LSUIElement</key>' >> $(APP_BUNDLE)/Contents/Info.plist
+	@echo '    <true/>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '</dict>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '</plist>' >> $(APP_BUNDLE)/Contents/Info.plist
+	@echo "Signing App Bundle..."
+	codesign -s - --force --deep $(APP_BUNDLE)
 	@echo "Build successful! Created $(APP_BUNDLE)"
 
 # 3. Clean all build artifacts
