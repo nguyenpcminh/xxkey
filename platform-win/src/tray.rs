@@ -14,7 +14,7 @@ pub const ID_TRAY_SIMPLE2: u32 = 2005;
 pub const ID_TRAY_SETTINGS: u32 = 2006;
 pub const ID_TRAY_EXIT: u32 = 2007;
 
-pub unsafe fn create_system_tray_icon(hwnd: HWND) {
+pub unsafe fn create_system_tray_icon(hwnd: HWND, enabled: bool) {
     let mut nid: NOTIFYICONDATAW = unsafe { std::mem::zeroed() };
     nid.cbSize = std::mem::size_of::<NOTIFYICONDATAW>() as u32;
     nid.hWnd = hwnd;
@@ -23,7 +23,11 @@ pub unsafe fn create_system_tray_icon(hwnd: HWND) {
     nid.uCallbackMessage = WM_TRAYICON;
     nid.hIcon = unsafe { LoadIconW(0, IDI_APPLICATION as *const u16) };
 
-    let tip = "XXKey - Vietnamese Input Method";
+    let tip = if enabled {
+        "XXKey - Vietnamese Input Method (ON)"
+    } else {
+        "XXKey - Vietnamese Input Method (OFF)"
+    };
     let tip_units: Vec<u16> = tip.encode_utf16().collect();
     for (i, &u) in tip_units.iter().enumerate() {
         if i < nid.szTip.len() - 1 {
@@ -33,6 +37,30 @@ pub unsafe fn create_system_tray_icon(hwnd: HWND) {
 
     unsafe {
         Shell_NotifyIconW(NIM_ADD, &nid);
+    }
+}
+
+pub unsafe fn update_system_tray_icon(hwnd: HWND, enabled: bool) {
+    let mut nid: NOTIFYICONDATAW = unsafe { std::mem::zeroed() };
+    nid.cbSize = std::mem::size_of::<NOTIFYICONDATAW>() as u32;
+    nid.hWnd = hwnd;
+    nid.uID = 1;
+    nid.uFlags = NIF_TIP;
+
+    let tip = if enabled {
+        "XXKey - Vietnamese Input Method (ON)"
+    } else {
+        "XXKey - Vietnamese Input Method (OFF)"
+    };
+    let tip_units: Vec<u16> = tip.encode_utf16().collect();
+    for (i, &u) in tip_units.iter().enumerate() {
+        if i < nid.szTip.len() - 1 {
+            nid.szTip[i] = u;
+        }
+    }
+
+    unsafe {
+        Shell_NotifyIconW(NIM_MODIFY, &nid);
     }
 }
 
@@ -100,6 +128,7 @@ pub unsafe fn show_tray_popup_menu(hwnd: HWND, enabled: bool, current_input: Inp
             hwnd,
             std::ptr::null(),
         );
+        PostMessageW(hwnd, WM_NULL, 0, 0);
         DestroyMenu(menu);
     }
 }
@@ -138,4 +167,17 @@ pub fn handle_tray_command(cmd_id: u32, config_mgr: &mut ConfigManager) -> bool 
         _ => {}
     }
     false
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tray_labels() {
+        assert_eq!(ID_TRAY_TOGGLE, 2001);
+        assert_eq!(ID_TRAY_TELEX, 2002);
+        assert_eq!(ID_TRAY_VNI, 2003);
+        assert_eq!(ID_TRAY_EXIT, 2007);
+    }
 }
