@@ -16,17 +16,17 @@ pub fn set_injecting(injecting: bool) {
     IS_INJECTING.with(|cell| cell.set(injecting));
 }
 
-/// Injects `count` Backspace keystrokes into the active application.
-pub fn send_backspaces(count: usize) {
-    if count == 0 {
+/// Injects backspaces and unicode characters atomically in a single SendInput call.
+pub fn send_edits(backspace_count: usize, chars: &[u32]) {
+    if backspace_count == 0 && chars.is_empty() {
         return;
     }
 
     set_injecting(true);
 
-    let mut inputs: Vec<INPUT> = Vec::with_capacity(count * 2);
+    let mut inputs: Vec<INPUT> = Vec::with_capacity(backspace_count * 2 + chars.len() * 4);
 
-    for _ in 0..count {
+    for _ in 0..backspace_count {
         let mut down: INPUT = unsafe { std::mem::zeroed() };
         down.r#type = INPUT_KEYBOARD;
         down.Anonymous.ki.wVk = VK_BACK as u16;
@@ -40,27 +40,6 @@ pub fn send_backspaces(count: usize) {
         inputs.push(down);
         inputs.push(up);
     }
-
-    unsafe {
-        SendInput(
-            inputs.len() as u32,
-            inputs.as_ptr(),
-            std::mem::size_of::<INPUT>() as i32,
-        );
-    }
-
-    set_injecting(false);
-}
-
-/// Injects a slice of Unicode UTF-32 codepoints into the active application.
-pub fn send_unicode_chars(chars: &[u32]) {
-    if chars.is_empty() {
-        return;
-    }
-
-    set_injecting(true);
-
-    let mut inputs: Vec<INPUT> = Vec::new();
 
     for &code in chars {
         if code == 0 {
@@ -99,6 +78,16 @@ pub fn send_unicode_chars(chars: &[u32]) {
     }
 
     set_injecting(false);
+}
+
+/// Injects `count` Backspace keystrokes into the active application.
+pub fn send_backspaces(count: usize) {
+    send_edits(count, &[]);
+}
+
+/// Injects a slice of Unicode UTF-32 codepoints into the active application.
+pub fn send_unicode_chars(chars: &[u32]) {
+    send_edits(0, chars);
 }
 
 #[cfg(test)]

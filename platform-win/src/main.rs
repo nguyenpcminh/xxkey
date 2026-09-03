@@ -4,18 +4,19 @@ pub mod tray;
 pub mod vk_map;
 
 use config::ConfigManager;
-use injector::{is_injecting, send_backspaces, send_unicode_chars};
+use injector::{is_injecting, send_edits};
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use tray::{
     create_system_tray_icon, handle_tray_command, remove_system_tray_icon, show_tray_popup_menu,
-    WM_TRAYICON,
+    update_system_tray_icon, WM_TRAYICON,
 };
 use vietime_engine::datatype::{ExtCode, HookCode, KeyEvent, KeyEventState};
 use vietime_engine::engine::Engine;
 use vk_map::*;
 use windows_sys::Win32::Foundation::*;
 use windows_sys::Win32::System::LibraryLoader::GetModuleHandleW;
+use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetKeyState, VK_CAPITAL, VK_SHIFT};
 use windows_sys::Win32::UI::WindowsAndMessaging::*;
 
 #[repr(C)]
@@ -43,6 +44,7 @@ struct State {
     config_mgr: ConfigManager,
     modifiers: ModifierState,
     last_config_check: Instant,
+    hwnd: HWND,
 }
 
 static STATE: Mutex<Option<State>> = Mutex::new(None);
@@ -64,7 +66,13 @@ unsafe extern "system" fn keyboard_proc(code: i32, wparam: WPARAM, lparam: LPARA
             // Throttle disk I/O config checks to at most once per second to ensure hook responsiveness
             let now = Instant::now();
             if now.duration_since(st.last_config_check) >= Duration::from_secs(1) {
-                st.config_mgr.reload_if_needed();
+                if st.config_mgr.reload_if_needed() {
+                    if st.hwnd != 0 {
+                        unsafe {
+                            update_system_tray_icon(st.hwnd, st.config_mgr.current.enabled);
+                        }
+                    }
+                }
                 st.last_config_check = now;
             }
 
@@ -83,11 +91,6 @@ unsafe extern "system" fn keyboard_proc(code: i32, wparam: WPARAM, lparam: LPARA
                     // VK_LWIN / VK_RWIN
                     st.modifiers.win = is_key_down;
                 }
-                vk_map::VK_CAPITAL => {
-                    if is_key_down {
-                        st.modifiers.caps_lock = !st.modifiers.caps_lock;
-                    }
-                }
                 _ => {}
             }
 
@@ -98,6 +101,11 @@ unsafe extern "system" fn keyboard_proc(code: i32, wparam: WPARAM, lparam: LPARA
                 {
                     st.config_mgr.current.enabled = !st.config_mgr.current.enabled;
                     st.config_mgr.save();
+                    if st.hwnd != 0 {
+                        unsafe {
+                            update_system_tray_icon(st.hwnd, st.config_mgr.current.enabled);
+                        }
+                    }
                     println!(
                         "XXKey engine status toggled: {}",
                         if st.config_mgr.current.enabled {
@@ -127,7 +135,11 @@ unsafe extern "system" fn keyboard_proc(code: i32, wparam: WPARAM, lparam: LPARA
             if is_key_down {
                 if let Some(logical_key) = vk_to_logical_key(vk) {
                     let ev_state = KeyEventState::KeyDown;
-                    let caps_status = if st.modifiers.is_caps() { 1 } else { 0 };
+
+                    // Query OS GetKeyState for exact Caps Lock and Shift status
+                    let caps_on = unsafe { (GetKeyState(VK_CAPITAL as i32) as u16 & 0x0001) != 0 };
+                    let shift_on = unsafe { (GetKeyState(VK_SHIFT as i32) as u16 & 0x8000) != 0 };
+                    let caps_status = if shift_on ^ caps_on { 1 } else { 0 };
                     let other_ctrl = false;
 
                     let hook_state = st.engine.handle_key(
@@ -151,9 +163,8 @@ unsafe extern "system" fn keyboard_proc(code: i32, wparam: WPARAM, lparam: LPARA
                                 chars.push(hook_state.char_data[i]);
                             }
 
-                            // Inject synthesized edits
-                            send_backspaces(bs_count);
-                            send_unicode_chars(&chars);
+                            // Inject synthesized edits atomically in a single SendInput invocation
+                            send_edits(bs_count, &chars);
 
                             return 1; // Intercept key
                         }
@@ -193,6 +204,11 @@ unsafe extern "system" fn window_proc(
                         }
                     }
                 }
+            } else if event == WM_LBUTTONDBLCLK {
+                if let Ok(exe_path) = std::env::current_exe() {
+                    let settings_exe = exe_path.with_file_name("xxkey-settings.exe");
+                    let _ = std::process::Command::new(settings_exe).spawn();
+                }
             }
             0
         }
@@ -200,7 +216,13 @@ unsafe extern "system" fn window_proc(
             let cmd_id = (wparam & 0xFFFF) as u32;
             if let Ok(mut guard) = STATE.lock() {
                 if let Some(ref mut st) = *guard {
+                    let prev_enabled = st.config_mgr.current.enabled;
                     let should_exit = handle_tray_command(cmd_id, &mut st.config_mgr);
+                    if st.config_mgr.current.enabled != prev_enabled {
+                        unsafe {
+                            update_system_tray_icon(hwnd, st.config_mgr.current.enabled);
+                        }
+                    }
                     if should_exit {
                         unsafe {
                             PostQuitMessage(0);
@@ -234,6 +256,7 @@ fn main() {
             config_mgr,
             modifiers: ModifierState::default(),
             last_config_check: Instant::now(),
+            hwnd: 0,
         });
     }
 
@@ -278,7 +301,12 @@ fn main() {
         );
 
         if hwnd != 0 {
-            create_system_tray_icon(hwnd);
+            if let Ok(mut guard) = STATE.lock() {
+                if let Some(ref mut st) = *guard {
+                    st.hwnd = hwnd;
+                    create_system_tray_icon(hwnd, st.config_mgr.current.enabled);
+                }
+            }
         }
 
         HOOK = SetWindowsHookExW(WH_KEYBOARD_LL, Some(keyboard_proc), instance, 0);

@@ -35,6 +35,10 @@ pub struct ConfigManager {
 impl ConfigManager {
     pub fn new() -> Self {
         let path = get_config_path();
+        Self::with_path(path)
+    }
+
+    pub fn with_path(path: PathBuf) -> Self {
         let mut mgr = Self {
             path,
             last_modified: None,
@@ -141,5 +145,24 @@ mod tests {
         assert_eq!(config.input_type, InputType::Telex);
         assert!(config.modern);
         assert!(config.spelling);
+    }
+
+    #[test]
+    fn test_config_save_and_reload() {
+        let dir = std::env::temp_dir();
+        let path = dir.join("test_xxkey_config_tmp");
+        let mut mgr = ConfigManager::with_path(path.clone());
+
+        mgr.current.enabled = false;
+        mgr.current.input_type = InputType::Vni;
+        mgr.current.modern = false;
+        mgr.save();
+
+        let mgr2 = ConfigManager::with_path(path.clone());
+        assert!(!mgr2.current.enabled);
+        assert_eq!(mgr2.current.input_type, InputType::Vni);
+        assert!(!mgr2.current.modern);
+
+        let _ = fs::remove_file(path);
     }
 }
