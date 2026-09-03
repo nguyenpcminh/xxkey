@@ -99,8 +99,8 @@ jobs:
             -o build/XXKey.app/Contents/MacOS/XXKey \
             -L target/release -lvietime_engine
             
-          # Create Info.plist
-          cat << 'EOF' > build/XXKey.app/Contents/Info.plist
+          APP_VERSION="${GITHUB_REF_NAME#v}"
+          cat << EOF > build/XXKey.app/Contents/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -114,9 +114,11 @@ jobs:
               <key>CFBundlePackageType</key>
               <string>APPL</string>
               <key>CFBundleShortVersionString</key>
-              <string>1.0</string>
+              <string>${APP_VERSION}</string>
               <key>LSMinimumSystemVersion</key>
               <string>10.15</string>
+              <key>LSUIElement</key>
+              <true/>
           </dict>
           </plist>
           EOF
