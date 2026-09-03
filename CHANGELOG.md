@@ -1,6 +1,34 @@
 # XXKey Change Log
 
-##### XXKey for Linux: (in development)
+##### Version 1.3.0 (03/09/2026)
+- **Hỗ trợ đầy đủ Windows 11 (`platform-win`)**:
+  - Hook bàn phím tầng thấp (`WH_KEYBOARD_LL`) tích hợp trực tiếp với lõi xử lý `vietime-engine`.
+  - Cơ chế xóa lùi và chèn ký tự Unicode nguyên tử (`SendInput`) có bảo vệ chống re-entrancy.
+  - Tích hợp khay hệ thống (System Tray) hoàn chỉnh: menu ngữ cảnh, tooltip trạng thái động, nhấp đúp để mở Cài đặt.
+  - Tự động nhận diện Caps Lock / Shift thời gian thực qua `GetKeyState`.
+  - Tải và tự động reload cấu hình động khi có thay đổi từ giao diện cấu hình.
+  - Bổ sung bộ kiểm thử unit test cho nền tảng Windows (`config`, `injector`, `tray`, `vk_map`).
+- **Giao diện Cài đặt & Tuỳ chọn gõ (`macOS`)**:
+  - Thêm cửa sổ Cài đặt (Settings window) trực quan từ menu bar.
+  - Thêm tuỳ chọn bật/tắt đặt dấu kiểu mới (Modern orthography: *oà, uý* vs *òa, úy*).
+  - Tự động ký mã (ad-hoc code signing) khi đóng gói App Bundle.
+- **Tài liệu & CI/CD**:
+  - Cập nhật trạng thái hỗ trợ đầy đủ cho macOS và Windows 11 trong tài liệu README.
+  - Tối ưu quy trình CI GitHub Actions tự động gắn phiên bản phát hành vào `Info.plist`.
+
+##### Version 1.2.1 (12/08/2026)
+- Sửa lỗi phục hồi nguyên âm / phụ âm trên macOS khi gõ từ sai chính tả.
+
+##### Version 1.1.2 (11/08/2026)
+- Hỗ trợ khởi động cùng hệ thống (Autostart) trên macOS, Windows và Linux.
+- Cập nhật tài liệu phản ánh trạng thái phát triển các nền tảng.
+
+##### Version 1.1.1 (10/08/2026)
+- Sửa lỗi gõ tiếng Việt trên thanh địa chỉ trình duyệt (browser omnibox).
+- Bổ sung hàm reset phiên gõ phím khi chuyển tiêu điểm ứng dụng.
+
+##### Version 1.0.1 (10/08/2026)
+- Thiết lập quy trình CI tự động build đa nền tảng và phát hành GitHub Release.
 
 ##### Version 1.2 RC5: (26/08/2019)
 - Sửa lỗi không gõ được chữ "quởn".

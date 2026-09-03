@@ -48,7 +48,7 @@ build-app: build-rust
 	@echo '    <key>CFBundlePackageType</key>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <string>APPL</string>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <key>CFBundleShortVersionString</key>' >> $(APP_BUNDLE)/Contents/Info.plist
-	@echo '    <string>1.0</string>' >> $(APP_BUNDLE)/Contents/Info.plist
+	@echo '    <string>1.3.0</string>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <key>LSMinimumSystemVersion</key>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <string>10.15</string>' >> $(APP_BUNDLE)/Contents/Info.plist
 	@echo '    <key>LSUIElement</key>' >> $(APP_BUNDLE)/Contents/Info.plist
