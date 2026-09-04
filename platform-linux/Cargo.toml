@@ -11,3 +11,4 @@ path = "src/main.rs"
 
 [dependencies]
 vietime-engine = { path = "../vietime-engine" }
+ctrlc = "3.4"

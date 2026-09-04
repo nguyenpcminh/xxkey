@@ -1,14 +1,13 @@
 # XXKey
 
-### Bộ gõ tiếng Việt mã nguồn mở tối ưu cho macOS & Windows (Rust Core)
+### Bộ gõ tiếng Việt mã nguồn mở tối ưu cho macOS, Windows & Linux (Rust Core)
 
 **XXKey** là bộ gõ tiếng Việt mã nguồn mở thế hệ mới, ban đầu được phát triển dưới dạng một bản fork từ dự án **OpenKey** (của tác giả _tuyenvm_). 
 
-Hiện tại, **XXKey** hỗ trợ hoàn chỉnh hai hệ điều hành:
+Hiện tại, **XXKey** hỗ trợ hoàn chỉnh ba hệ điều hành:
 - **macOS:** Chạy ẩn siêu nhẹ qua hệ thống Event Tap, tích hợp thanh trạng thái menu bar và cửa sổ Cài đặt trực quan.
 - **Windows 11 / 10:** Chạy ẩn qua Low-Level Keyboard Hook (`WH_KEYBOARD_LL`), tích hợp khay hệ thống (System Tray) đầy đủ, tiêm phím nguyên tử (`SendInput`) và giao diện Slint UI siêu nhẹ.
-
-Phiên bản cho **Linux** (IBus / Fcitx5) đang nằm trong lộ trình hoàn thiện tiếp theo.
+- **Linux (X11 / Wayland / D-Bus / IBus):** Chạy ẩn qua daemon xử lý phím gốc Rust `xxkey-daemon`, tiêm phím và hoàn tác xóa phím siêu nhẹ, hỗ trợ phím tắt đổi chế độ `Ctrl + Space` / `Alt + Z` và lưu cấu hình tự động tại `~/.config/xxkey/config`.
 
 Để tối ưu hóa hiệu năng, tăng cường an toàn bộ nhớ và mang lại khả năng tương thích đa nền tảng lâu dài, toàn bộ phần lõi xử lý phím đã được chuyển đổi sang ngôn ngữ **Rust** (**`vietime-engine`**). Lõi xử lý này kế thừa chuẩn xác thuật toán xử lý phím gốc của OpenKey (C++), vượt qua bộ kiểm thử tự động (differential testing) với hơn 1.800 test vector để đảm bảo hành vi gõ dấu tiếng Việt chính xác 100%, không bị lỗi gạch chân hay mất phím.
 
@@ -24,6 +23,7 @@ Phiên bản cho **Linux** (IBus / Fcitx5) đang nằm trong lộ trình hoàn t
 - **Khởi động cùng hệ thống (Autostart):**
   - macOS: Tích hợp qua `SMAppService`.
   - Windows: Tích hợp qua Windows Registry (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`).
+  - Linux: Tích hợp qua XDG Autostart desktop entry (`~/.config/autostart/xxkey.desktop`).
 - **Khôi phục phím gõ sai (Restore spelling):** Tự động hoàn tác về ký tự gốc khi phát hiện từ sai quy tắc chính tả tiếng Việt.
 - **Chính tả hiện đại (Modern Orthography):** Tuỳ chọn đặt dấu kiểu mới (*oà, uý*) hoặc kiểu cũ (*òa, úy*).
 - **Giao diện cấu hình siêu nhẹ:**
@@ -33,7 +33,7 @@ Phiên bản cho **Linux** (IBus / Fcitx5) đang nằm trong lộ trình hoàn t
   - Hiển thị tooltip trạng thái động (chế độ gõ, kiểu gõ, bảng mã).
   - Nhấp đúp chuột để mở nhanh cửa sổ Cài đặt.
   - Menu chuột phải chuyển đổi nhanh kiểu gõ / chế độ tiếng Anh - tiếng Việt.
-- **Phím tắt chuyển chế độ (Hotkeys):** Hỗ trợ `Ctrl + Shift` hoặc `Alt + Z` để chuyển đổi nhanh giữa tiếng Việt và tiếng Anh.
+- **Phím tắt chuyển chế độ (Hotkeys):** Hỗ trợ `Ctrl + Shift`, `Ctrl + Space` hoặc `Alt + Z` để chuyển đổi nhanh giữa tiếng Việt và tiếng Anh.
 - **Phụ âm ghép & Gõ nhanh:** Hỗ trợ Telex nhanh (`cc` -> `ch`, `gg` -> `gi`, `kk` -> `kh`...) và tự động viết hoa chữ cái đầu câu.
 - **Gõ tắt (Macro):** Khởi tạo và sử dụng bảng từ gõ tắt.
 
@@ -48,9 +48,9 @@ Dự án được tổ chức dưới dạng một Cargo Workspace thống nhấ
 | **[`vietime-engine`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/vietime-engine)** | Lõi xử lý chính (State machine, spelling, grammar) | Hoàn thành 100% |
 | **[`platform-macos`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-macos)** | Front-end SwiftUI & Event Tap hook cho macOS | Hoàn thành (Chạy ổn định qua Event Tap) |
 | **[`platform-win`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-win)** | Daemon Win32 Hook (`WH_KEYBOARD_LL`), System Tray, Injector | Hoàn thành (Hỗ trợ đầy đủ Windows 11/10) |
+| **[`platform-linux`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-linux)** | Daemon bắt phím, X11/Keysym Mapping & Edit Injector cho Linux | Hoàn thành (Daemon xử lý phím nguyên khối Rust) |
 | **[`ui-tray`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-tray)** | Tích hợp khay hệ thống, context menu và dynamic tooltip | Hoàn thành |
 | **[`ui-settings`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-settings)** | Giao diện cấu hình bộ gõ bằng Slint UI | Hoàn thành |
-| **[`platform-linux`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/platform-linux)** | Daemon bắt phím & Tích hợp IBus/Fcitx5 cho Linux | Đang phát triển (Khung stub D-Bus/IBus) |
 | **[`ui-candidate`](file:///Users/itaccountvn.ab-inbev.com/Desktop/tools/xxkey/ui-candidate)** | Giao diện gợi ý từ / bảng ứng viên gõ | Đang phát triển (Skeleton) |
 
 ---
@@ -58,12 +58,13 @@ Dự án được tổ chức dưới dạng một Cargo Workspace thống nhấ
 ## 🛠️ Hướng dẫn cài đặt & Biên dịch
 
 > [!IMPORTANT]
-> Để tránh xung đột phím, vui lòng tắt hoàn toàn các bộ gõ tiếng Việt khác (như UniKey, EVKey, bộ gõ mặc định của macOS/Windows) trước khi khởi chạy XXKey.
+> Để tránh xung đột phím, vui lòng tắt hoàn toàn các bộ gõ tiếng Việt khác (như UniKey, EVKey, bộ gõ mặc định của macOS/Windows/IBus/Fcitx) trước khi khởi chạy XXKey.
 
 ### Yêu cầu môi trường
 - Đã cài đặt **Rust toolchain** (cargo/rustc 2024 edition).
 - Trên macOS: Yêu cầu **Xcode Command Line Tools** (`swiftc`).
 - Trên Windows: Yêu cầu **MSVC C++ Build Tools** hoặc MinGW-w64.
+- Trên Linux: Yêu cầu **GCC/Clang** và thư viện phát triển X11/XKB/D-Bus.
 
 ### 1. Biên dịch trên macOS
 Tại thư mục gốc của dự án:
@@ -85,16 +86,14 @@ Sau khi hoàn tất, các file thực thi sẽ nằm tại:
 - `target\release\xxkey-daemon.exe` (Chương trình gõ phím chạy ẩn dưới khay hệ thống)
 - `target\release\xxkey-settings.exe` (Giao diện cấu hình bộ gõ Slint)
 
-### 3. Đóng gói phân phối (Multi-platform)
-- **Tự động đóng gói ZIP cho các nền tảng:**
-  ```bash
-  make zips
-  ```
-  Sẽ sinh ra các gói tại thư mục `build/`:
-  - `XXKey-macOS.zip` (App Bundle sẵn sàng chạy)
-  - `XXKey-Windows.zip` (Mã nguồn và core biên dịch sẵn cho Windows)
-  - `XXKey-Linux.zip` (Mã nguồn và core biên dịch sẵn cho Linux)
-- Ngoài ra, dự án tích hợp **GitHub Actions CI/CD** tự động biên dịch native trên runner của cả 3 hệ điều hành khi đẩy tag phiên bản dạng `v*`.
+### 3. Biên dịch trên Linux
+Mở terminal tại thư mục gốc dự án:
+```bash
+cargo build --release -p platform-linux -p ui-settings
+```
+Sau khi hoàn tất, các file thực thi sẽ nằm tại:
+- `target/release/xxkey-daemon` (Daemon xử lý phím gõ tiếng Việt chạy ẩn)
+- `target/release/xxkey-settings` (Giao diện cấu hình bộ gõ Slint)
 
 ---
 
@@ -119,7 +118,11 @@ Sau khi hoàn tất, các file thực thi sẽ nằm tại:
 4. Trong giao diện Cài đặt, tích chọn **"Khởi động cùng Windows"** để bộ gõ tự chạy mỗi khi đăng nhập máy tính.
 
 ### 3. Cho Linux
-- Hiện đang trong quá trình phát triển tích hợp IBus/Fcitx5 daemon.
+1. Tải `XXKey-Linux.zip` hoặc biên dịch từ mã nguồn.
+2. Chạy `xxkey-daemon` trong nền.
+3. **Thao tác nhanh:**
+   - **Phím tắt:** Nhấn `Ctrl + Space` hoặc `Alt + Z` để bật/tắt nhanh chế độ tiếng Việt / tiếng Anh.
+   - **Cấu hình:** Chạy `xxkey-settings` để điều chỉnh kiểu gõ (Telex, VNI, Simple Telex) hoặc cấu hình được lưu trực tiếp tại `~/.config/xxkey/config`.
 
 ---
 
@@ -127,4 +130,3 @@ Sau khi hoàn tất, các file thực thi sẽ nằm tại:
 Bộ gõ XXKey được phát hành hoàn toàn miễn phí dưới giấy phép nguồn mở **GPL-3.0**. 
 
 Cam kết bảo mật: **Bộ gõ không chứa mã độc, không kết nối mạng gửi dữ liệu, không theo dõi và không lưu trữ nội dung phím gõ của người dùng.**
-
